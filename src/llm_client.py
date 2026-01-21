@@ -237,8 +237,12 @@ class OllamaClient(BaseLLMClient):
         """
         try:
             # Try to list models to verify connection
-            models = self._client.list()
-            model_names = [m["name"] for m in models.get("models", [])]
+            response = self._client.list()
+            # Handle both object-based (new) and dict-based (old) responses
+            if hasattr(response, "models"):
+                model_names = [m.model for m in response.models]
+            else:
+                model_names = [m["name"] for m in response.get("models", [])]
 
             # Check if our model is available
             # Model names might include tags like 'llama3.1:8b'
@@ -264,8 +268,12 @@ class OllamaClient(BaseLLMClient):
             List of model names.
         """
         try:
-            models = self._client.list()
-            return [m["name"] for m in models.get("models", [])]
+            response = self._client.list()
+            # Handle both object-based (new) and dict-based (old) responses
+            if hasattr(response, "models"):
+                return [m.model for m in response.models]
+            else:
+                return [m["name"] for m in response.get("models", [])]
         except Exception as e:
             logger.error(f"Failed to list models: {e}")
             return []
