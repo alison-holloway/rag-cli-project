@@ -1,0 +1,29 @@
+# CLI
+click>=8.1.0
+rich>=13.0.0  # Beautiful terminal output
+
+# Document Processing
+pypdf>=3.17.0
+markdown>=3.5.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Embeddings & Vector Store
+sentence-transformers>=2.2.0
+# chromadb>=0.4.0  # TODO: Enable once onnxruntime supports Python 3.14
+numpy>=1.24.0
+
+# LLM Integration
+ollama>=0.1.0  # FREE local LLM (default)
+# anthropic>=0.18.0  # Optional: uncomment if using --llm claude flag
+
+# Utilities
+python-dotenv>=1.0.0
+pydantic>=2.0.0  # Configuration validation
+pydantic-settings>=2.0.0  # Settings management
+tqdm>=4.66.0  # Progress bars
+
+# Development
+pytest>=7.4.0
+black>=23.0.0
+ruff>=0.1.0
