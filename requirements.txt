@@ -10,7 +10,7 @@ lxml>=4.9.0
 
 # Embeddings & Vector Store
 sentence-transformers>=2.2.0
-# chromadb>=0.4.0  # TODO: Enable once onnxruntime supports Python 3.14
+chromadb>=0.4.0
 numpy>=1.24.0
 
 # LLM Integration

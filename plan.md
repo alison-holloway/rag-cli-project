@@ -11,7 +11,7 @@ Build a command-line RAG (Retrieval-Augmented Generation) system that processes 
 ## Technical Stack
 
 ### Core Technologies
-- **Language**: Python 3.14.0
+- **Language**: Python 3.13
 - **CLI Framework**: Click or Typer (for elegant CLI interface)
 - **Document Processing**:
   - PyPDF2 or pypdf for PDF extraction
@@ -27,7 +27,7 @@ Build a command-line RAG (Retrieval-Augmented Generation) system that processes 
 ### Development Environment
 - **OS**: macOS (M3 chip - ARM architecture compatible)
 - **RAM**: 16GB (sufficient for local embeddings)
-- **Python Version**: 3.14.0 (already installed)
+- **Python Version**: 3.13 (using 3.13 instead of 3.14 for ChromaDB compatibility)
 - **Dependency Management**: pip + requirements.txt or Poetry
 
 ## System Architecture
@@ -400,7 +400,7 @@ rag-cli query "What is X?" --llm claude  # Uses Claude API
 ## Prerequisites & Setup
 
 ### What You Already Have ✅
-- ✅ Python 3.14.0 installed
+- ✅ Python 3.13 installed (downgraded from 3.14 for ChromaDB compatibility)
 - ✅ Ollama 0.13.0 installed
 - ✅ macOS with M3 chip
 
@@ -426,7 +426,7 @@ ollama pull llama3.1:8b
 
 1. **Verify your setup**
    ```bash
-   python --version  # Should show 3.14.0
+   python --version  # Should show 3.13.x (after activating venv)
    ollama --version  # Should show 0.13.0
    ollama list       # Check if llama3.1:8b is already downloaded
    ```
@@ -439,7 +439,7 @@ ollama pull llama3.1:8b
 
 3. **Set up virtual environment**
    ```bash
-   python -m venv venv
+   python3.13 -m venv venv
    source venv/bin/activate  # On macOS
    ```
 
