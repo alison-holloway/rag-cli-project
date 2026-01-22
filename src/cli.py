@@ -9,7 +9,7 @@ from rich.table import Table
 
 from . import __version__
 from .config import get_settings
-from .logger import get_logger, setup_logging
+from .logger import get_logger, set_log_level, setup_logging
 from .progress import (
     print_error,
     print_info,
@@ -159,32 +159,42 @@ def _setup_ollama(model: str = "llama3.1:8b") -> bool:
 @click.group()
 @click.version_option(version=__version__, prog_name="rag-cli")
 @click.option(
+    "--verbose", "-v",
+    is_flag=True,
+    help="Show detailed output (INFO logs)",
+)
+@click.option(
     "--debug",
     is_flag=True,
-    help="Enable debug logging",
+    help="Enable debug logging (even more detailed)",
 )
 @click.pass_context
-def cli(ctx: click.Context, debug: bool) -> None:
+def cli(ctx: click.Context, verbose: bool, debug: bool) -> None:
     """RAG CLI - A command-line RAG system for document question-answering.
 
     Process documents (PDF, Markdown, HTML) and enable intelligent
     question-answering using local embeddings and LLM integration.
     """
+    import logging
+
     ctx.ensure_object(dict)
 
-    # Initialize logging
-    log = setup_logging()
-    if debug:
-        import logging
+    # Initialize logging with appropriate verbosity
+    # Default: quiet (WARNING only)
+    # --verbose: show INFO messages
+    # --debug: show DEBUG messages (implies verbose)
+    log = setup_logging(verbose=verbose or debug)
 
-        log.setLevel(logging.DEBUG)
-        for handler in log.handlers:
-            handler.setLevel(logging.DEBUG)
+    if debug:
+        set_log_level(logging.DEBUG)
+    elif verbose:
+        set_log_level(logging.INFO)
 
     # Store settings and logger in context
     ctx.obj["settings"] = get_settings()
     ctx.obj["logger"] = log
     ctx.obj["debug"] = debug
+    ctx.obj["verbose"] = verbose or debug
 
     log.debug("RAG CLI initialized")
 

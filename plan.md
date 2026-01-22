@@ -212,6 +212,16 @@ These features were added after the initial Phase 1 POC was completed:
   - Check if Ollama is running, start if needed
   - Check if llama3.1:8b is pulled, pull if needed
   - Show progress indicators during setup
+- **Status**: Completed
+
+#### 2. Verbose Flag for Clean Output (Added: Jan 2026)
+- **What**: Add `--verbose` flag to all commands; default output is clean and minimal
+- **Why**: Reduce output clutter for end users while preserving debug capability
+- **Implementation**:
+  - Default: Show only spinner and final results (hide INFO logs)
+  - With `--verbose`: Show all internal processing details and INFO logs
+  - Available on all commands: `query`, `add`, `chat`, `init`, etc.
+- **Usage**: `rag-cli query "question" --verbose`
 - **Status**: Pending implementation
 
 ## Phase 2: Web UI (Future)

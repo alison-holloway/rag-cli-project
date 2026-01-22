@@ -66,6 +66,32 @@ The `init` command automatically:
 
 ## Commands
 
+### Global Options
+
+All commands support these global options:
+
+| Option | Description |
+|--------|-------------|
+| `-v, --verbose` | Show detailed output with INFO-level logs |
+| `--debug` | Show debug output (even more detailed than verbose) |
+| `--help` | Show help for any command |
+
+**Default behavior:** Clean, minimal output showing only essential information (progress indicators and results).
+
+**Verbose mode:** Shows detailed logs including model loading, database connections, chunk processing, and timing information. Useful for debugging or understanding what's happening internally.
+
+```bash
+# Default (clean output)
+rag-cli query "What is Python?"
+
+# Verbose (detailed output)
+rag-cli --verbose query "What is Python?"
+rag-cli -v query "What is Python?"
+
+# Debug (maximum detail)
+rag-cli --debug query "What is Python?"
+```
+
 ### `rag-cli init`
 
 Initialize the RAG system with automatic Ollama setup.
@@ -100,6 +126,9 @@ rag-cli add ./documents/ --recursive
 
 # Force re-indexing
 rag-cli add document.pdf --force
+
+# With verbose output (shows chunking and embedding details)
+rag-cli -v add document.pdf
 ```
 
 **Supported formats:**
@@ -124,12 +153,41 @@ rag-cli query "What is REST?" --provider claude
 
 # Adjust creativity
 rag-cli query "Summarize the document" --temperature 0.2
+
+# With verbose output (shows retrieval details)
+rag-cli -v query "What is Python?"
 ```
 
 **Options:**
 - `--top-k`: Number of chunks to retrieve (default: 5)
 - `--provider`: LLM provider (`ollama` or `claude`)
 - `--temperature`: Response creativity (0.0-1.0)
+
+**Example output (default):**
+```
+Query: What is Python?
+Using LLM: ollama, retrieving top 5 chunks
+
+╭─────────────────────── Answer ───────────────────────╮
+│ Python is a high-level, interpreted programming      │
+│ language known for its clear syntax and readability. │
+╰──────────────────────────────────────────────────────╯
+```
+
+**Example output (verbose):**
+```
+Query: What is Python?
+Using LLM: ollama, retrieving top 5 chunks
+
+╭─────────────────────── Answer ───────────────────────╮
+│ Python is a high-level, interpreted programming      │
+│ language known for its clear syntax and readability. │
+╰──────────────────────────────────────────────────────╯
+[10:30:01] INFO  Loading embedding model: all-MiniLM-L6-v2
+           INFO  Connected to collection 'rag_documents' (29 documents)
+           INFO  Retrieved 5 chunks for query (avg similarity: 0.72)
+           INFO  Query complete: 5 chunks, 156 chars
+```
 
 ### `rag-cli chat`
 
@@ -370,6 +428,18 @@ rag-cli-project/
 ```
 
 ## Troubleshooting
+
+### General Debugging Tip
+
+If you encounter any issues, run commands with the `--verbose` flag to see detailed logs:
+
+```bash
+rag-cli -v add document.pdf
+rag-cli -v query "your question"
+rag-cli --debug init  # Even more detail
+```
+
+This will show model loading, database connections, chunk processing, and other internal operations that can help identify problems.
 
 ### Ollama Not Installed
 
