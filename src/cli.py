@@ -23,6 +23,139 @@ console = Console()
 logger = get_logger(__name__)
 
 
+def _setup_ollama(model: str = "llama3.1:8b") -> bool:
+    """Set up Ollama service and pull the required model.
+
+    Args:
+        model: The model to pull if not available.
+
+    Returns:
+        True if Ollama is ready to use, False otherwise.
+    """
+    import shutil
+    import subprocess
+    import time
+
+    console.print("\n[bold]Setting up Ollama...[/bold]")
+
+    # Step 1: Check if Ollama is installed
+    ollama_path = shutil.which("ollama")
+    if not ollama_path:
+        print_warning("Ollama is not installed.")
+        print_info("Install Ollama from: https://ollama.ai")
+        print_info("  macOS: brew install ollama")
+        print_info("  Linux: curl -fsSL https://ollama.ai/install.sh | sh")
+        return False
+
+    print_success("Ollama is installed")
+
+    # Step 2: Check if Ollama is running
+    def is_ollama_running() -> bool:
+        try:
+            import ollama
+
+            client = ollama.Client()
+            client.list()
+            return True
+        except Exception:
+            return False
+
+    if not is_ollama_running():
+        print_info("Starting Ollama service...")
+        try:
+            # Start ollama serve in the background
+            subprocess.Popen(
+                ["ollama", "serve"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                start_new_session=True,
+            )
+            # Wait for it to start (up to 10 seconds)
+            for i in range(20):
+                time.sleep(0.5)
+                if is_ollama_running():
+                    break
+            if is_ollama_running():
+                print_success("Ollama service started")
+            else:
+                print_warning("Could not start Ollama service")
+                print_info("Try running 'ollama serve' manually")
+                return False
+        except Exception as e:
+            print_warning(f"Failed to start Ollama: {e}")
+            print_info("Try running 'ollama serve' manually")
+            return False
+    else:
+        print_success("Ollama service is running")
+
+    # Step 3: Check if model is available
+    try:
+        import ollama
+
+        client = ollama.Client()
+        response = client.list()
+
+        if hasattr(response, "models"):
+            model_names = [m.model for m in response.models]
+        else:
+            model_names = [m["name"] for m in response.get("models", [])]
+
+        # Check if model is already pulled (handle both 'llama3.1:8b' and 'llama3.1')
+        base_model = model.split(":")[0]
+        model_available = any(base_model in name for name in model_names)
+
+        if model_available:
+            print_success(f"Model '{model}' is available")
+            return True
+
+    except Exception as e:
+        print_warning(f"Could not check models: {e}")
+        return False
+
+    # Step 4: Pull the model
+    print_info(f"Pulling model '{model}' (this may take a few minutes)...")
+    console.print("[dim]Model size: ~4.7GB for llama3.1:8b[/dim]")
+
+    try:
+        import ollama
+
+        client = ollama.Client()
+
+        # Use streaming to show progress
+        current_status = ""
+        with console.status(f"[bold blue]Downloading {model}...") as status:
+            for progress in client.pull(model, stream=True):
+                if hasattr(progress, "status"):
+                    new_status = progress.status
+                else:
+                    new_status = progress.get("status", "")
+
+                if new_status != current_status:
+                    current_status = new_status
+                    status.update(f"[bold blue]{current_status}...")
+
+                # Show download progress if available
+                if hasattr(progress, "completed") and hasattr(progress, "total"):
+                    completed = progress.completed or 0
+                    total = progress.total or 0
+                    if total > 0:
+                        pct = (completed / total) * 100
+                        size_gb = total / (1024**3)
+                        done_gb = completed / (1024**3)
+                        status.update(
+                            f"[bold blue]{current_status}: "
+                            f"{done_gb:.1f}/{size_gb:.1f}GB ({pct:.0f}%)"
+                        )
+
+        print_success(f"Model '{model}' pulled successfully")
+        return True
+
+    except Exception as e:
+        print_warning(f"Failed to pull model: {e}")
+        print_info(f"Try running 'ollama pull {model}' manually")
+        return False
+
+
 @click.group()
 @click.version_option(version=__version__, prog_name="rag-cli")
 @click.option(
@@ -58,11 +191,17 @@ def cli(ctx: click.Context, debug: bool) -> None:
 
 @cli.command()
 @click.argument("project_name", default="rag-project")
+@click.option(
+    "--skip-ollama",
+    is_flag=True,
+    help="Skip automatic Ollama setup",
+)
 @click.pass_context
-def init(ctx: click.Context, project_name: str) -> None:
+def init(ctx: click.Context, project_name: str, skip_ollama: bool) -> None:
     """Initialize a new RAG project.
 
-    Creates the necessary directory structure and configuration files.
+    Creates the necessary directory structure, initializes the vector store,
+    and sets up Ollama with the required model.
     """
     settings = ctx.obj["settings"]
 
@@ -96,6 +235,18 @@ def init(ctx: click.Context, project_name: str) -> None:
         count = store.count()
 
     print_success(f"Vector store ready ({count} chunks)")
+
+    # Set up Ollama (unless skipped)
+    if not skip_ollama:
+        ollama_model = settings.llm.ollama_model
+        ollama_ready = _setup_ollama(model=ollama_model)
+        if not ollama_ready:
+            print_warning("Ollama setup incomplete - queries may not work")
+            print_info("Run 'ollama serve' and 'ollama pull llama3.1:8b' manually")
+    else:
+        print_info("Skipped Ollama setup")
+
+    console.print()
     print_success("Project initialized successfully!")
 
 

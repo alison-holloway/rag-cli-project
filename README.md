@@ -16,7 +16,7 @@ A command-line Retrieval-Augmented Generation (RAG) system for querying your doc
 ### Prerequisites
 
 - Python 3.10+
-- [Ollama](https://ollama.ai) installed and running (for local LLM)
+- [Ollama](https://ollama.ai) installed (the CLI will start it automatically)
 
 ### Installation
 
@@ -34,25 +34,18 @@ pip install -r requirements.txt
 
 # Install the package
 pip install -e .
-```
 
-### Setup Ollama
-
-```bash
-# Install Ollama (macOS)
+# Install Ollama (if not already installed)
+# macOS:
 brew install ollama
-
-# Start Ollama service
-ollama serve
-
-# Pull a model (in another terminal)
-ollama pull llama3.1:8b
+# Linux:
+curl -fsSL https://ollama.ai/install.sh | sh
 ```
 
 ### Basic Usage
 
 ```bash
-# Initialize the RAG system
+# Initialize the RAG system (automatically sets up Ollama and pulls the model)
 rag-cli init
 
 # Add documents
@@ -65,15 +58,31 @@ rag-cli query "What is machine learning?"
 rag-cli chat
 ```
 
+The `init` command automatically:
+- Creates necessary directories
+- Initializes the vector database
+- Starts Ollama if not running
+- Downloads the LLM model (~4.7GB) if not already pulled
+
 ## Commands
 
 ### `rag-cli init`
 
-Initialize the RAG system and create necessary directories.
+Initialize the RAG system with automatic Ollama setup.
 
 ```bash
 rag-cli init
 ```
+
+This command:
+1. Creates necessary directories (`data/vector_db`, `data/documents`, `logs`)
+2. Initializes the ChromaDB vector store
+3. Checks if Ollama is installed
+4. Starts Ollama service if not running
+5. Downloads the LLM model (`llama3.1:8b`) if not already available
+
+**Options:**
+- `--skip-ollama`: Skip automatic Ollama setup (for manual configuration)
 
 ### `rag-cli add`
 
@@ -362,21 +371,57 @@ rag-cli-project/
 
 ## Troubleshooting
 
-### Ollama Not Running
+### Ollama Not Installed
 
 ```
-Error: LLM provider 'ollama' is not available.
+Ollama is not installed.
 ```
 
-**Solution:** Start Ollama with `ollama serve`
+**Solution:** Install Ollama before running `rag-cli init`:
 
-### Model Not Found
+```bash
+# macOS
+brew install ollama
+
+# Linux
+curl -fsSL https://ollama.ai/install.sh | sh
+
+# Windows
+# Download from https://ollama.ai/download
+```
+
+After installing, run `rag-cli init` again - it will automatically start Ollama and pull the required model.
+
+### Ollama Service Won't Start
 
 ```
-Error: Model 'llama3.1:8b' not found for provider 'ollama'.
+Could not start Ollama service
 ```
 
-**Solution:** Pull the model with `ollama pull llama3.1:8b`
+**Solution:** Try starting Ollama manually:
+
+```bash
+ollama serve
+```
+
+If you see port conflicts, another instance may be running. Check with:
+```bash
+lsof -i :11434
+```
+
+### Model Download Failed
+
+```
+Failed to pull model: ...
+```
+
+**Solution:** Pull the model manually:
+
+```bash
+ollama pull llama3.1:8b
+```
+
+Ensure you have sufficient disk space (~4.7GB for llama3.1:8b).
 
 ### No Documents Indexed
 

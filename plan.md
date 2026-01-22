@@ -113,7 +113,7 @@ rag-cli/
 
 ### Basic Commands
 ```bash
-# Initialize a new RAG project
+# Initialize a new RAG project (auto-starts Ollama and pulls model if needed)
 rag-cli init [project_name]
 
 # Add documents to the knowledge base
@@ -200,7 +200,21 @@ rag-cli import knowledge_base.zip
 - [ ] Create user documentation
 - [ ] Add example documents and queries
 
-### Phase 2: Web UI (Future)
+### Post-Phase 1 Enhancements
+
+### Feature Additions (After POC Complete)
+These features were added after the initial Phase 1 POC was completed:
+
+#### 1. Automatic Ollama Setup (Added: Jan 2026)
+- **What**: `rag-cli init` now automatically starts Ollama and pulls llama3.1:8b if not available
+- **Why**: Improves user experience by eliminating manual Ollama setup steps
+- **Implementation**: 
+  - Check if Ollama is running, start if needed
+  - Check if llama3.1:8b is pulled, pull if needed
+  - Show progress indicators during setup
+- **Status**: Pending implementation
+
+## Phase 2: Web UI (Future)
 - [ ] Design API backend (FastAPI)
 - [ ] Create REST endpoints
 - [ ] Build React or Vue.js frontend
