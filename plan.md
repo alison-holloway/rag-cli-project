@@ -215,14 +215,14 @@ These features were added after the initial Phase 1 POC was completed:
 - **Status**: Completed
 
 #### 2. Verbose Flag for Clean Output (Added: Jan 2026)
-- **What**: Add `--verbose` flag to all commands; default output is clean and minimal
+- **What**: Add `--verbose` flag to the main `rag-cli` command (applies to all subcommands)
 - **Why**: Reduce output clutter for end users while preserving debug capability
 - **Implementation**:
   - Default: Show only spinner and final results (hide INFO logs)
   - With `--verbose`: Show all internal processing details and INFO logs
-  - Available on all commands: `query`, `add`, `chat`, `init`, etc.
-- **Usage**: `rag-cli query "question" --verbose`
-- **Status**: Pending implementation
+  - Flag applies globally: `rag-cli --verbose <subcommand>`
+- **Usage**: `rag-cli --verbose query "question"`, `rag-cli --verbose add file.pdf`, `rag-cli --verbose chat`
+- **Status**: Completed
 
 ## Phase 2: Web UI (Future)
 - [ ] Design API backend (FastAPI)
