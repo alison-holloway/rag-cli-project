@@ -587,19 +587,50 @@ tail -f logs/frontend.log
 
 ### Web UI Features
 
-- **Chat Interface**: Ask questions in a familiar chat-style layout
-- **Real-time Responses**: See loading indicators while answers are generated
-- **Source Display**: Expandable sources section shows which documents were used
-- **Metadata**: View the model used and processing time for each response
-- **Error Handling**: Clear error messages with dismiss functionality
+**Chat Interface:**
+- Ask questions in a familiar chat-style layout
+- Real-time loading indicators while answers are generated
+- Expandable sources section shows which documents were used
+- View model used and processing time for each response
+
+**Document Upload:**
+- Drag-and-drop file upload directly in the browser
+- Click to browse and select files
+- Supports PDF, Markdown (.md), and HTML files
+- Upload progress indicators with success/error feedback
+- Documents are immediately available for querying after upload
+
+**Document Management:**
+- View all indexed documents in the sidebar
+- See file type, name, and chunk count for each document
+- Delete documents with one click (with confirmation)
+- Document count badge shows total indexed documents
+
+**Notifications:**
+- Toast notifications for upload success/failure
+- Clear feedback for all document operations
+- Auto-dismiss or manual dismiss options
 
 ### Quick Start with Web UI
 
-1. Make sure you have documents indexed (via CLI: `rag-cli add ./documents/`)
-2. Run `./start-web.sh`
-3. Open http://localhost:5173
-4. Type a question and press Enter or click Send
-5. When done, run `./stop-web.sh`
+1. Run `./start-web.sh`
+2. Open http://localhost:5173
+3. **Upload documents**: Drag files onto the upload zone in the sidebar (or click to browse)
+4. **Ask questions**: Type in the chat box and press Enter
+5. View answers with source citations
+6. When done, run `./stop-web.sh`
+
+**Tip:** You can also pre-index documents via CLI (`rag-cli add ./documents/`) before starting the web UI.
+
+### Supported File Types
+
+The web UI accepts the same file types as the CLI:
+
+| Format | Extensions |
+|--------|------------|
+| PDF | `.pdf` |
+| Markdown | `.md`, `.markdown` |
+| HTML | `.html`, `.htm` |
 
 ### Manual Startup (Alternative)
 

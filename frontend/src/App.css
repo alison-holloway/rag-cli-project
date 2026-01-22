@@ -1,1 +1,28 @@
-/* App-level styles - ChatInterface handles its own layout */
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Desktop layout with sidebar always visible */
+@media (min-width: 1024px) {
+  .app {
+    flex-direction: row;
+  }
+
+  .main-content {
+    max-width: calc(100% - 320px);
+  }
+}
+
+/* Mobile layout - sidebar slides in */
+@media (max-width: 1023px) {
+  .main-content {
+    width: 100%;
+    max-width: 100%;
+  }
+}

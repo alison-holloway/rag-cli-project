@@ -1,0 +1,129 @@
+.document-upload {
+  padding: 1rem;
+}
+
+.upload-zone {
+  border: 2px dashed #d1d5db;
+  border-radius: 0.75rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #fafafa;
+}
+
+.upload-zone:hover {
+  border-color: #9ca3af;
+  background: #f3f4f6;
+}
+
+.upload-zone.dragging {
+  border-color: #667eea;
+  background: #eef2ff;
+  border-style: solid;
+}
+
+.upload-zone.uploading {
+  cursor: wait;
+  pointer-events: none;
+}
+
+.upload-icon {
+  color: #9ca3af;
+  margin-bottom: 0.75rem;
+}
+
+.upload-zone:hover .upload-icon {
+  color: #6b7280;
+}
+
+.upload-zone.dragging .upload-icon {
+  color: #667eea;
+}
+
+.upload-text {
+  margin: 0 0 0.5rem 0;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.upload-text strong {
+  color: #667eea;
+}
+
+.upload-hint {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
+/* Upload progress states */
+.upload-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0;
+}
+
+.upload-progress p {
+  margin: 0;
+  font-weight: 500;
+  color: #374151;
+}
+
+.upload-progress .chunks {
+  font-size: 0.85rem;
+  color: #059669;
+}
+
+.upload-progress .error-message {
+  font-size: 0.85rem;
+  color: #dc2626;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+/* Spinner */
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Success icon */
+.success-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #d1fae5;
+  color: #059669;
+  border-radius: 50%;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+/* Error icon */
+.error-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 50%;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
