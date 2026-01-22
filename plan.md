@@ -224,6 +224,17 @@ These features were added after the initial Phase 1 POC was completed:
 - **Usage**: `rag-cli --verbose query "question"`, `rag-cli --verbose add file.pdf`, `rag-cli --verbose chat`
 - **Status**: Completed
 
+#### 3. Web Application Startup Scripts (Added: Jan 2026)
+- **What**: Single-command startup/shutdown for both backend and frontend services
+- **Why**: Simplify developer experience, eliminate confusing two-terminal setup
+- **Implementation**:
+  - `start-web.sh` (or `.py`) - Starts both FastAPI backend and React frontend in background
+  - `stop-web.sh` (or `.py`) - Cleanly shuts down both services
+  - Status messages and log viewing instructions
+  - Cross-platform compatible (macOS/Linux)
+- **Usage**: `./start-web.sh` to start, `./stop-web.sh` to stop
+- **Status**: Completed
+
 ## Phase 2: Web UI (Local Development)
 
 ### Overview
@@ -457,15 +468,47 @@ pydantic>=2.0.0
 
 ### Running the Application
 
-#### Terminal 1 - Backend:
+#### Starting the Web Application (Recommended):
+```bash
+# Single command to start both backend and frontend
+./start-web.sh
+```
+
+This will:
+- Validate prerequisites (Node.js, venv, node_modules)
+- Auto-install frontend dependencies if missing
+- Start FastAPI backend on port 8000
+- Start React frontend on port 5173
+- Save process IDs for clean shutdown
+- Display URLs and log locations
+
+#### Stopping the Web Application:
+```bash
+# Clean shutdown of both services
+./stop-web.sh
+```
+
+#### Viewing Logs:
+```bash
+# View backend logs
+tail -f logs/backend.log
+
+# View frontend logs
+tail -f logs/frontend.log
+```
+
+#### Manual Startup (Alternative):
+
+If you prefer separate terminals or need more control:
+
+**Terminal 1 - Backend:**
 ```bash
 cd rag-cli-project
 source venv/bin/activate
-pip install -r requirements-web.txt
 uvicorn backend.main:app --reload --port 8000
 ```
 
-#### Terminal 2 - Frontend:
+**Terminal 2 - Frontend:**
 ```bash
 cd rag-cli-project/frontend
 npm install  # First time only

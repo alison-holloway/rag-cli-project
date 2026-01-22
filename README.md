@@ -63,7 +63,13 @@ rag-cli chat
 
 ### Basic Usage (Web UI)
 
-Prefer a graphical interface? See [Web UI](#web-ui) for running the browser-based chat interface.
+Prefer a graphical interface? Start the web application with a single command:
+
+```bash
+./start-web.sh
+```
+
+Then open http://localhost:5173 in your browser. See [Web UI](#web-ui) for more details.
 
 The `init` command automatically:
 - Creates necessary directories
@@ -546,29 +552,38 @@ RAG CLI includes a React-based web interface for a chat-style experience in your
 - Node.js 18+ (install via `brew install node` on macOS)
 - Backend dependencies installed (`pip install -r requirements-web.txt`)
 
-### Running the Web Application
+### Starting the Web Application
 
-The web application requires two terminals - one for the backend API and one for the frontend.
-
-**Terminal 1 - Start the Backend:**
+Use the provided script to start both backend and frontend with a single command:
 
 ```bash
-cd rag-cli-project
-source venv/bin/activate
-uvicorn backend.main:app --reload --port 8000
+./start-web.sh
 ```
 
-**Terminal 2 - Start the Frontend:**
+This will:
+- Start the FastAPI backend on port 8000
+- Start the React frontend on port 5173
+- Display URLs for the Web UI and API docs
+
+**Open the Web UI:** http://localhost:5173
+
+### Stopping the Web Application
 
 ```bash
-cd rag-cli-project/frontend
-npm install  # First time only
-npm run dev
+./stop-web.sh
 ```
 
-**Open the Web UI:**
+### Viewing Logs
 
-Navigate to **http://localhost:5173** in your browser.
+The scripts run services in the background. To view logs:
+
+```bash
+# View backend logs
+tail -f logs/backend.log
+
+# View frontend logs
+tail -f logs/frontend.log
+```
 
 ### Web UI Features
 
@@ -581,14 +596,26 @@ Navigate to **http://localhost:5173** in your browser.
 ### Quick Start with Web UI
 
 1. Make sure you have documents indexed (via CLI: `rag-cli add ./documents/`)
-2. Start the backend server (Terminal 1)
-3. Start the frontend server (Terminal 2)
-4. Open http://localhost:5173
-5. Type a question and press Enter or click Send
+2. Run `./start-web.sh`
+3. Open http://localhost:5173
+4. Type a question and press Enter or click Send
+5. When done, run `./stop-web.sh`
 
-### Stopping the Servers
+### Manual Startup (Alternative)
 
-Press `Ctrl+C` in each terminal to stop the servers.
+If you prefer to run services manually in separate terminals:
+
+**Terminal 1 - Backend:**
+```bash
+source venv/bin/activate
+uvicorn backend.main:app --reload --port 8000
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd frontend
+npm run dev
+```
 
 ## Development
 
@@ -659,6 +686,8 @@ rag-cli-project/
 ├── logs/                   # Log files
 ├── requirements.txt        # Core dependencies
 ├── requirements-web.txt    # Web API dependencies
+├── start-web.sh           # Start web application
+├── stop-web.sh            # Stop web application
 ├── pyproject.toml         # Project config
 └── README.md              # This file
 ```
