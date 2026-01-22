@@ -589,7 +589,12 @@ def chat(ctx: click.Context, llm: str, stream: bool) -> None:
 @cli.command("list")
 @click.pass_context
 def list_documents(ctx: click.Context) -> None:
-    """List all indexed documents."""
+    """List all indexed documents.
+
+    Shows a table of all documents in the knowledge base with their
+    file type and number of chunks. Use this to see what has been
+    indexed or to find document names for the 'remove' command.
+    """
     from .vector_store import VectorStore
 
     store = VectorStore()
@@ -628,7 +633,11 @@ def list_documents(ctx: click.Context) -> None:
 @click.argument("document_name")
 @click.pass_context
 def remove(ctx: click.Context, document_name: str) -> None:
-    """Remove a document from the knowledge base."""
+    """Remove a document from the knowledge base.
+
+    DOCUMENT_NAME is the filename as shown by 'rag-cli list' (e.g., 'report.pdf').
+    All chunks associated with this document will be permanently deleted.
+    """
     from .vector_store import VectorStore
 
     store = VectorStore()
@@ -657,7 +666,11 @@ def remove(ctx: click.Context, document_name: str) -> None:
 @click.option("--confirm", is_flag=True, help="Confirm clearing the database")
 @click.pass_context
 def clear(ctx: click.Context, confirm: bool) -> None:
-    """Clear the entire knowledge base."""
+    """Clear the entire knowledge base.
+
+    WARNING: This permanently deletes ALL indexed documents and chunks.
+    This action cannot be undone. Use --confirm to proceed.
+    """
     from .vector_store import VectorStore
 
     store = VectorStore()
@@ -683,7 +696,12 @@ def clear(ctx: click.Context, confirm: bool) -> None:
 @cli.command()
 @click.pass_context
 def stats(ctx: click.Context) -> None:
-    """Show system statistics."""
+    """Show system statistics.
+
+    Displays information about the knowledge base including:
+    document count, total chunks, embedding model, chunk settings,
+    and current LLM configuration.
+    """
     from .config import get_settings
     from .vector_store import VectorStore
 
@@ -714,7 +732,11 @@ def stats(ctx: click.Context) -> None:
 
 @cli.group()
 def config() -> None:
-    """Manage configuration settings."""
+    """Manage configuration settings.
+
+    View and modify RAG CLI configuration. Settings can also be
+    configured via environment variables or .env file.
+    """
     pass
 
 
@@ -722,7 +744,11 @@ def config() -> None:
 @click.argument("key")
 @click.argument("value")
 def config_set(key: str, value: str) -> None:
-    """Set a configuration value."""
+    """Set a configuration value.
+
+    KEY uses dot notation (e.g., 'llm.ollama_model', 'chunking.chunk_size').
+    Use 'rag-cli config list' to see available settings.
+    """
     console.print(f"Setting [cyan]{key}[/cyan] = [green]{value}[/green]")
     print_warning("Runtime configuration changes not yet implemented.")
     print_info("Edit .env file or set environment variables instead.")
@@ -731,7 +757,10 @@ def config_set(key: str, value: str) -> None:
 @config.command("get")
 @click.argument("key")
 def config_get(key: str) -> None:
-    """Get a configuration value."""
+    """Get a configuration value.
+
+    KEY uses dot notation (e.g., 'llm.ollama_model', 'embedding.model').
+    """
     settings = get_settings()
 
     # Navigate nested settings
@@ -749,7 +778,12 @@ def config_get(key: str) -> None:
 @config.command("list")
 @click.pass_context
 def config_list(ctx: click.Context) -> None:
-    """List all configuration values."""
+    """List all configuration values.
+
+    Shows current settings for LLM, embedding, chunking, retrieval,
+    vector store, and logging. Values can be changed via environment
+    variables or .env file.
+    """
     settings = ctx.obj.get("settings") or get_settings()
 
     table = Table(title="Current Configuration")

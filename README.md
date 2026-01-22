@@ -121,15 +121,19 @@ rag-cli add document.pdf
 # Add all files in a directory
 rag-cli add ./documents/
 
-# Add recursively
-rag-cli add ./documents/ --recursive
+# Add recursively (include subdirectories)
+rag-cli add ./documents/ -r
 
-# Force re-indexing
-rag-cli add document.pdf --force
+# Force re-indexing of already indexed files
+rag-cli add document.pdf -f
 
 # With verbose output (shows chunking and embedding details)
 rag-cli -v add document.pdf
 ```
+
+**Options:**
+- `-r, --recursive`: Recursively process directories
+- `-f, --force`: Re-index documents even if already indexed
 
 **Supported formats:**
 - PDF (.pdf)
@@ -139,29 +143,33 @@ rag-cli -v add document.pdf
 
 ### `rag-cli query`
 
-Query the knowledge base.
+Query the knowledge base and get an answer based on indexed documents.
 
 ```bash
 # Basic query
 rag-cli query "What is Python?"
 
-# Retrieve more context
+# Retrieve more context chunks
 rag-cli query "Explain neural networks" --top-k 10
 
 # Use a different LLM provider
-rag-cli query "What is REST?" --provider claude
+rag-cli query "What is REST?" --llm claude
 
-# Adjust creativity
+# Adjust response creativity
 rag-cli query "Summarize the document" --temperature 0.2
+
+# Show which source documents were used
+rag-cli query "What is Python?" --show-sources
 
 # With verbose output (shows retrieval details)
 rag-cli -v query "What is Python?"
 ```
 
 **Options:**
-- `--top-k`: Number of chunks to retrieve (default: 5)
-- `--provider`: LLM provider (`ollama` or `claude`)
-- `--temperature`: Response creativity (0.0-1.0)
+- `-k, --top-k`: Number of chunks to retrieve (default: 5)
+- `-l, --llm`: LLM provider (`ollama` or `claude`, default: ollama)
+- `-t, --temperature`: Response creativity (0.0-1.0)
+- `-s, --show-sources`: Display source documents used for the answer
 
 **Example output (default):**
 ```
@@ -191,53 +199,138 @@ Using LLM: ollama, retrieving top 5 chunks
 
 ### `rag-cli chat`
 
-Start an interactive chat session.
+Start an interactive chat session for asking multiple questions.
 
 ```bash
 rag-cli chat
 
-# With streaming responses
+# With streaming responses (see answers as they're generated)
 rag-cli chat --stream
+
+# Use Claude instead of Ollama
+rag-cli chat --llm claude
 ```
+
+Type `exit`, `quit`, or `q` to end the session.
+
+**Options:**
+- `-l, --llm`: LLM provider (`ollama` or `claude`, default: ollama)
+- `-s, --stream`: Stream responses as they are generated
 
 ### `rag-cli list`
 
-List indexed documents.
+List all indexed documents in the knowledge base.
 
 ```bash
 rag-cli list
 ```
 
+Shows a table with document names, file types, and chunk counts. Use this to see what has been indexed or to find document names for the `remove` command.
+
+**Example output:**
+```
+Indexed Documents (2):
+
+┏━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━┓
+┃ #  ┃ Document       ┃ Type ┃ Chunks ┃
+┡━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━┩
+│ 1  │ guide.pdf      │ pdf  │     15 │
+│ 2  │ notes.md       │ md   │      8 │
+└────┴────────────────┴──────┴────────┘
+
+Total chunks: 23
+```
+
 ### `rag-cli remove`
 
-Remove documents from the knowledge base.
+Remove a document from the knowledge base.
 
 ```bash
-# Remove by filename
+# Remove by filename (as shown in 'rag-cli list')
 rag-cli remove document.pdf
+```
 
-# Remove all documents
+The document name should match exactly as shown in `rag-cli list`. All chunks associated with the document will be permanently deleted.
+
+### `rag-cli clear`
+
+Clear the entire knowledge base.
+
+```bash
+# Preview what will be deleted
+rag-cli clear
+
+# Actually delete everything
 rag-cli clear --confirm
 ```
 
+**WARNING:** This permanently deletes ALL indexed documents and chunks. This action cannot be undone.
+
+**Options:**
+- `--confirm`: Required flag to actually perform the deletion
+
 ### `rag-cli stats`
 
-Show system statistics.
+Show system statistics and current configuration.
 
 ```bash
 rag-cli stats
 ```
 
+Displays information about the knowledge base including: document count, total chunks, embedding model, chunk settings, and current LLM configuration.
+
+**Example output:**
+```
+╭─────────── Stats ───────────╮
+│ RAG CLI Statistics          │
+╰─────────────────────────────╯
+Documents indexed    2
+Total chunks         23
+Collection           rag_documents
+
+Embedding model      all-MiniLM-L6-v2
+Chunk size           800
+Chunk overlap        100
+LLM provider         ollama
+```
+
 ### `rag-cli config`
 
-View or update configuration.
+View and manage configuration settings.
 
 ```bash
-# Show current config
-rag-cli config show
+# List all current settings
+rag-cli config list
 
-# Update a setting
+# Get a specific setting
+rag-cli config get llm.ollama_model
+
+# Set a configuration value
 rag-cli config set llm.ollama_model llama3.1:8b
+```
+
+Settings use dot notation (e.g., `llm.ollama_model`, `chunking.chunk_size`). Configuration can also be set via environment variables or `.env` file.
+
+**Subcommands:**
+- `list`: Show all current configuration values
+- `get <key>`: Get a specific setting value
+- `set <key> <value>`: Update a setting
+
+### Getting Help
+
+Use the `--help` flag on any command to see detailed usage information:
+
+```bash
+# See all available commands
+rag-cli --help
+
+# Get help for a specific command
+rag-cli add --help
+rag-cli query --help
+rag-cli config --help
+
+# Get help for subcommands
+rag-cli config list --help
 ```
 
 ## Configuration
