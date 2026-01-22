@@ -1,6 +1,6 @@
 # RAG CLI
 
-A command-line Retrieval-Augmented Generation (RAG) system for querying your documents using local LLMs.
+A Retrieval-Augmented Generation (RAG) system for querying your documents using local LLMs. Available as a CLI, REST API, or Web UI.
 
 ## Features
 
@@ -9,8 +9,10 @@ A command-line Retrieval-Augmented Generation (RAG) system for querying your doc
 - **Local Embeddings**: Generate embeddings using sentence-transformers (all-MiniLM-L6-v2)
 - **Vector Storage**: Persistent storage with ChromaDB
 - **LLM Integration**: Works with Ollama (free, local) or Claude API
-- **Interactive CLI**: Easy-to-use command-line interface
-- **REST API**: FastAPI backend for web integration
+- **Multiple Interfaces**:
+  - **CLI**: Command-line interface for terminal users
+  - **REST API**: FastAPI backend for programmatic access
+  - **Web UI**: React-based chat interface in your browser
 
 ## Quick Start
 
@@ -43,7 +45,7 @@ brew install ollama
 curl -fsSL https://ollama.ai/install.sh | sh
 ```
 
-### Basic Usage
+### Basic Usage (CLI)
 
 ```bash
 # Initialize the RAG system (automatically sets up Ollama and pulls the model)
@@ -58,6 +60,10 @@ rag-cli query "What is machine learning?"
 # Interactive chat mode
 rag-cli chat
 ```
+
+### Basic Usage (Web UI)
+
+Prefer a graphical interface? See [Web UI](#web-ui) for running the browser-based chat interface.
 
 The `init` command automatically:
 - Creates necessary directories
@@ -531,7 +537,58 @@ The API is configured to allow requests from common local development ports:
 - `http://localhost:5173` (Vite)
 - `http://localhost:3000` (Create React App)
 
-> **Note:** This is Phase 2.1 of the web interface. Phase 2.2 will add a React frontend.
+## Web UI
+
+RAG CLI includes a React-based web interface for a chat-style experience in your browser.
+
+### Prerequisites
+
+- Node.js 18+ (install via `brew install node` on macOS)
+- Backend dependencies installed (`pip install -r requirements-web.txt`)
+
+### Running the Web Application
+
+The web application requires two terminals - one for the backend API and one for the frontend.
+
+**Terminal 1 - Start the Backend:**
+
+```bash
+cd rag-cli-project
+source venv/bin/activate
+uvicorn backend.main:app --reload --port 8000
+```
+
+**Terminal 2 - Start the Frontend:**
+
+```bash
+cd rag-cli-project/frontend
+npm install  # First time only
+npm run dev
+```
+
+**Open the Web UI:**
+
+Navigate to **http://localhost:5173** in your browser.
+
+### Web UI Features
+
+- **Chat Interface**: Ask questions in a familiar chat-style layout
+- **Real-time Responses**: See loading indicators while answers are generated
+- **Source Display**: Expandable sources section shows which documents were used
+- **Metadata**: View the model used and processing time for each response
+- **Error Handling**: Clear error messages with dismiss functionality
+
+### Quick Start with Web UI
+
+1. Make sure you have documents indexed (via CLI: `rag-cli add ./documents/`)
+2. Start the backend server (Terminal 1)
+3. Start the frontend server (Terminal 2)
+4. Open http://localhost:5173
+5. Type a question and press Enter or click Send
+
+### Stopping the Servers
+
+Press `Ctrl+C` in each terminal to stop the servers.
 
 ## Development
 
@@ -582,6 +639,18 @@ rag-cli-project/
 │   │   └── routes.py      # API routes
 │   └── services/
 │       └── rag_service.py # RAG service layer
+├── frontend/               # React web UI
+│   ├── package.json       # Node.js dependencies
+│   ├── vite.config.js     # Vite configuration
+│   ├── index.html         # HTML entry point
+│   └── src/
+│       ├── App.jsx        # Main React component
+│       ├── components/    # UI components
+│       │   ├── ChatInterface.jsx
+│       │   ├── MessageList.jsx
+│       │   └── MessageInput.jsx
+│       └── services/
+│           └── api.js     # Backend API client
 ├── tests/                  # Test files
 ├── examples/               # Example documents
 ├── data/                   # Data storage
@@ -674,6 +743,65 @@ For large documents, try:
 - Reducing chunk size in config
 - Processing documents in smaller batches
 - Using a machine with more RAM
+
+### Web UI Issues
+
+#### Port Already in Use
+
+```
+error: address already in use
+```
+
+**Solution:** Another process is using port 8000 (backend) or 5173 (frontend).
+
+```bash
+# Find what's using the port
+lsof -i :8000
+lsof -i :5173
+
+# Kill the process or use a different port
+uvicorn backend.main:app --port 8001  # Use different backend port
+```
+
+#### CORS Errors in Browser Console
+
+```
+Access to fetch blocked by CORS policy
+```
+
+**Solution:** Make sure the backend is running on port 8000. The CORS configuration expects the backend at `http://localhost:8000`. If using a different port, update `frontend/src/services/api.js`.
+
+#### Frontend Can't Connect to Backend
+
+**Solution:** Verify both servers are running:
+
+```bash
+# Check backend is responding
+curl http://localhost:8000/api/health
+
+# Check frontend is serving
+curl http://localhost:5173
+```
+
+#### Node.js Not Found
+
+```
+npm: command not found
+```
+
+**Solution:** Install Node.js:
+
+```bash
+# macOS
+brew install node
+
+# Linux (Ubuntu/Debian)
+sudo apt install nodejs npm
+
+# Or use nvm (Node Version Manager)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+nvm install node
+```
 
 ## License
 
