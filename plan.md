@@ -224,13 +224,346 @@ These features were added after the initial Phase 1 POC was completed:
 - **Usage**: `rag-cli --verbose query "question"`, `rag-cli --verbose add file.pdf`, `rag-cli --verbose chat`
 - **Status**: Completed
 
-## Phase 2: Web UI (Future)
-- [ ] Design API backend (FastAPI)
-- [ ] Create REST endpoints
-- [ ] Build React or Vue.js frontend
-- [ ] Document upload interface
-- [ ] Chat interface with history
-- [ ] Deployment considerations
+## Phase 2: Web UI (Local Development)
+
+### Overview
+Build a local web interface for the RAG system using FastAPI backend and React frontend. Focus on learning full-stack development while keeping deployment simple (local-only for now).
+
+### Technology Stack
+
+#### Backend
+- **FastAPI** - Modern Python web framework
+  - Why: Matches existing Python skills, auto API docs, async support
+  - Serves REST API endpoints
+  - Reuses existing RAG CLI components
+  
+#### Frontend  
+- **React 18+** with **Vite** - Modern frontend framework
+  - Why: Industry standard, great learning opportunity, fast development
+  - TypeScript optional (recommend starting with JavaScript)
+  - Component-based architecture
+  
+#### Development Setup
+- **Local only** - Both frontend and backend run on localhost
+- **No database needed initially** - Use in-memory session storage
+- **CORS enabled** - Frontend (port 5173) talks to backend (port 8000)
+
+### Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                     Browser (localhost:5173)             │
+│                                                          │
+│  ┌────────────────────────────────────────────────┐    │
+│  │           React Frontend (Vite)                 │    │
+│  │  - Chat Interface                               │    │
+│  │  - Document Upload                              │    │
+│  │  - Settings Panel                               │    │
+│  └────────────────────────────────────────────────┘    │
+│                         │                                │
+│                         │ HTTP/REST API                  │
+│                         ▼                                │
+│  ┌────────────────────────────────────────────────┐    │
+│  │        FastAPI Backend (localhost:8000)         │    │
+│  │  - /api/query                                   │    │
+│  │  - /api/upload                                  │    │
+│  │  - /api/documents                               │    │
+│  │  - /api/health                                  │    │
+│  └────────────────────────────────────────────────┘    │
+│                         │                                │
+│                         │                                │
+│                         ▼                                │
+│  ┌────────────────────────────────────────────────┐    │
+│  │         Existing RAG Components                 │    │
+│  │  - document_loader.py                           │    │
+│  │  - embedder.py                                  │    │
+│  │  - vector_store.py                              │    │
+│  │  - llm_client.py                                │    │
+│  └────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Project Structure
+
+```
+rag-cli-project/
+├── src/                    # Existing CLI code
+│   ├── cli.py
+│   ├── document_loader.py
+│   └── ...
+├── backend/                # New FastAPI backend
+│   ├── __init__.py
+│   ├── main.py            # FastAPI app
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── routes.py      # API endpoints
+│   │   └── models.py      # Pydantic models
+│   ├── services/
+│   │   └── rag_service.py # Wrapper around existing RAG code
+│   └── config.py
+├── frontend/               # New React frontend
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── index.html
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   ├── components/
+│   │   │   ├── ChatInterface.jsx
+│   │   │   ├── DocumentUpload.jsx
+│   │   │   ├── MessageList.jsx
+│   │   │   └── SettingsPanel.jsx
+│   │   ├── services/
+│   │   │   └── api.js     # API client
+│   │   └── styles/
+│   │       └── App.css
+│   └── public/
+├── data/                   # Existing
+├── venv/                   # Existing
+└── requirements-web.txt    # Additional web dependencies
+```
+
+### Implementation Phases
+
+#### Phase 2.1: Backend API Setup (Week 1) ✅ COMPLETE
+**Goal:** Create FastAPI backend that exposes RAG functionality via REST API
+
+Tasks:
+- [x] Install FastAPI and dependencies (`fastapi`, `uvicorn`, `python-multipart`)
+- [x] Create basic FastAPI app structure
+- [x] Implement core API endpoints:
+  - `POST /api/query` - Submit questions, get answers
+  - `POST /api/upload` - Upload documents
+  - `GET /api/documents` - List indexed documents
+  - `DELETE /api/documents/{id}` - Remove documents
+  - `GET /api/health` - Health check
+- [x] Create service layer that wraps existing RAG components
+- [x] Add CORS middleware for local development
+- [x] Test endpoints with curl/Postman
+- [x] Auto-generate API docs (FastAPI provides this free!)
+
+**API Examples:**
+```python
+# POST /api/query
+{
+  "query": "What is this about?",
+  "llm_provider": "ollama",  # or "claude"
+  "top_k": 5
+}
+
+# Response
+{
+  "answer": "This document is about...",
+  "sources": [
+    {"file": "doc.pdf", "page": 1, "chunk": "..."}
+  ],
+  "metadata": {
+    "llm_provider": "ollama",
+    "chunks_retrieved": 5,
+    "processing_time": 2.3
+  }
+}
+```
+
+#### Phase 2.2: Frontend Setup (Week 1-2)
+**Goal:** Create basic React app with chat interface
+
+Tasks:
+- [ ] Initialize Vite + React project
+- [ ] Set up basic component structure
+- [ ] Create API client service (axios or fetch)
+- [ ] Implement ChatInterface component:
+  - Message input box
+  - Send button
+  - Message list display
+  - Loading indicators
+- [ ] Connect to backend API
+- [ ] Test end-to-end query flow
+- [ ] Basic styling (can use Tailwind CSS or plain CSS)
+
+**Key Components:**
+```jsx
+// ChatInterface.jsx - Main chat UI
+// MessageList.jsx - Display chat history
+// MessageInput.jsx - Text input + send button
+// SettingsPanel.jsx - LLM provider toggle
+```
+
+#### Phase 2.3: Document Upload (Week 2)
+**Goal:** Add document upload functionality to UI
+
+Tasks:
+- [ ] Create DocumentUpload component
+- [ ] Implement drag-and-drop upload
+- [ ] Show upload progress
+- [ ] Display list of uploaded documents
+- [ ] Add delete document functionality
+- [ ] Handle file validation (PDF, MD, HTML only)
+- [ ] Show success/error messages
+
+#### Phase 2.4: Polish & Features (Week 2-3)
+**Goal:** Improve UX and add nice-to-have features
+
+Tasks:
+- [ ] Add chat history display (session-based)
+- [ ] Implement streaming responses (if using Claude API)
+- [ ] Add loading states and spinners
+- [ ] Improve error handling and user feedback
+- [ ] Add settings panel (choose LLM provider, adjust parameters)
+- [ ] Make it responsive (works on different screen sizes)
+- [ ] Add keyboard shortcuts (Enter to send, etc.)
+- [ ] Polish styling and UX
+
+**Optional Enhancements:**
+- [ ] Dark mode toggle
+- [ ] Code syntax highlighting in responses
+- [ ] Export chat history
+- [ ] Document preview
+- [ ] Search within documents
+
+### Dependencies
+
+#### Backend (requirements-web.txt)
+```
+# Existing dependencies from requirements.txt
+# Plus new web dependencies:
+
+# Web Framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6  # For file uploads
+
+# CORS
+python-cors>=1.0.0
+
+# Optional: Response validation
+pydantic>=2.0.0
+```
+
+#### Frontend (package.json)
+```json
+{
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.0",
+    "vite": "^5.0.0"
+  }
+}
+```
+
+### Running the Application
+
+#### Terminal 1 - Backend:
+```bash
+cd rag-cli-project
+source venv/bin/activate
+pip install -r requirements-web.txt
+uvicorn backend.main:app --reload --port 8000
+```
+
+#### Terminal 2 - Frontend:
+```bash
+cd rag-cli-project/frontend
+npm install  # First time only
+npm run dev
+```
+
+Then open browser to `http://localhost:5173`
+
+### Development Workflow
+
+1. **Start Backend** - Terminal 1, runs on port 8000
+2. **Start Frontend** - Terminal 2, runs on port 5173
+3. **Make Changes** - Both have hot reload (auto-refresh on save)
+4. **Test** - Use browser for frontend, check backend logs for API calls
+5. **Commit** - Git commit when features work
+
+### Success Criteria
+
+**Phase 2 MVP:**
+- ✅ Can upload documents via web UI
+- ✅ Can ask questions in chat interface
+- ✅ Answers appear with sources cited
+- ✅ Can toggle between Ollama and Claude
+- ✅ Works smoothly on localhost
+- ✅ Clean, intuitive UI
+
+**Quality Metrics:**
+- Response time: <5 seconds for queries (with Llama)
+- UI is responsive and doesn't freeze
+- Error messages are clear and helpful
+- Works in Chrome/Firefox/Safari
+
+### Learning Resources
+
+**FastAPI:**
+- Official tutorial: https://fastapi.tiangolo.com/tutorial/
+- Focus on: path operations, request/response models, file uploads
+
+**React:**
+- Official tutorial: https://react.dev/learn
+- Focus on: components, props, state (useState), effects (useEffect)
+
+**Vite:**
+- Quick start: https://vitejs.dev/guide/
+- Just need basics - Vite makes setup easy
+
+### Cost Considerations
+
+**Still 100% Free!**
+- ✅ FastAPI: Free and open source
+- ✅ React: Free and open source
+- ✅ Vite: Free and open source
+- ✅ Running locally: No hosting costs
+- ✅ Same free Ollama/Llama backend
+
+Only cost is if you use Claude API via the UI (same as CLI).
+
+### Testing Strategy
+
+**Manual Testing Checklist:**
+- [ ] Upload a PDF document
+- [ ] Ask a question, verify answer appears
+- [ ] Check sources are shown
+- [ ] Toggle to Claude API (if you have key), verify it works
+- [ ] Try uploading multiple documents
+- [ ] Test error cases (invalid file, no documents, etc.)
+- [ ] Test on different browsers
+- [ ] Verify chat history works within session
+
+**Future: Automated Testing**
+- Frontend: React Testing Library
+- Backend: pytest with FastAPI TestClient
+- (Add later, manual testing fine for learning)
+
+### Future Enhancements (Phase 3+)
+
+These can wait until Phase 2 is working:
+- **Persistent chat history** - Save conversations to disk/DB
+- **User accounts** - Multi-user support
+- **Deployment** - Deploy to cloud (Vercel, Railway, etc.)
+- **Real-time updates** - WebSocket for streaming responses
+- **Advanced features** - Document preview, search, analytics
+- **Mobile app** - React Native version
+
+### Next Steps for Phase 2
+
+Ready to start? Here's the order:
+
+1. **Phase 2.1** - Build FastAPI backend first (easier to test with curl)
+2. **Phase 2.2** - Build React frontend, connect to backend
+3. **Phase 2.3** - Add document upload
+4. **Phase 2.4** - Polish and improve UX
+
+Each phase builds on the previous, and you can test incrementally!
+
+---
+
+**Want to begin Phase 2.1 (FastAPI Backend)?** Let me know and I'll give you the prompt for Claude Code!
 
 ### Phase 3: macOS Desktop App (Future)
 - [ ] Evaluate frameworks (Electron, Tauri, or native Swift)

@@ -1,0 +1,12 @@
+# Web Framework Dependencies for RAG CLI
+# Install with: pip install -r requirements-web.txt
+
+# FastAPI and server
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+
+# File uploads
+python-multipart>=0.0.6
+
+# Note: pydantic is already in requirements.txt
+# CORS is built into FastAPI (no extra package needed)

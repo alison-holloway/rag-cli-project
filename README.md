@@ -10,6 +10,7 @@ A command-line Retrieval-Augmented Generation (RAG) system for querying your doc
 - **Vector Storage**: Persistent storage with ChromaDB
 - **LLM Integration**: Works with Ollama (free, local) or Claude API
 - **Interactive CLI**: Easy-to-use command-line interface
+- **REST API**: FastAPI backend for web integration
 
 ## Quick Start
 
@@ -468,6 +469,70 @@ for chunk in pipeline.query_stream("Explain machine learning"):
     print(chunk, end="", flush=True)
 ```
 
+## Web API
+
+RAG CLI includes a REST API built with FastAPI for web integration.
+
+### Installation
+
+Install the web dependencies in addition to the base requirements:
+
+```bash
+pip install -r requirements-web.txt
+```
+
+### Starting the API Server
+
+```bash
+# Start the development server
+uvicorn backend.main:app --reload --port 8000
+
+# Or run directly with Python
+python -m backend.main
+```
+
+The API will be available at `http://localhost:8000`.
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/health` | Health check with Ollama status and document stats |
+| POST | `/api/query` | Query the knowledge base with a question |
+| POST | `/api/upload` | Upload and index a document |
+| GET | `/api/documents` | List all indexed documents |
+| DELETE | `/api/documents/{id}` | Delete a document from the knowledge base |
+
+### Example: Query the Knowledge Base
+
+```bash
+curl -X POST http://localhost:8000/api/query \
+  -H "Content-Type: application/json" \
+  -d '{"query": "What is Python?", "top_k": 5}'
+```
+
+### Example: Upload a Document
+
+```bash
+curl -X POST http://localhost:8000/api/upload \
+  -F "file=@document.pdf"
+```
+
+### API Documentation
+
+FastAPI provides auto-generated interactive documentation:
+
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+
+### CORS Configuration
+
+The API is configured to allow requests from common local development ports:
+- `http://localhost:5173` (Vite)
+- `http://localhost:3000` (Create React App)
+
+> **Note:** This is Phase 2.1 of the web interface. Phase 2.2 will add a React frontend.
+
 ## Development
 
 ### Running Tests
@@ -484,17 +549,17 @@ pytest tests/ --cov=src --cov-report=html
 
 ```bash
 # Check code style
-ruff check src/ tests/
+ruff check src/ backend/ tests/
 
 # Auto-fix issues
-ruff check src/ tests/ --fix
+ruff check src/ backend/ tests/ --fix
 ```
 
 ### Project Structure
 
 ```
 rag-cli-project/
-├── src/                    # Source code
+├── src/                    # Core RAG source code
 │   ├── __init__.py
 │   ├── cli.py             # CLI commands
 │   ├── config.py          # Configuration
@@ -509,13 +574,22 @@ rag-cli-project/
 │   ├── exceptions.py      # Custom exceptions
 │   ├── progress.py        # Progress indicators
 │   └── logger.py          # Logging
+├── backend/                # FastAPI backend
+│   ├── __init__.py
+│   ├── main.py            # FastAPI application
+│   ├── api/
+│   │   ├── models.py      # Pydantic models
+│   │   └── routes.py      # API routes
+│   └── services/
+│       └── rag_service.py # RAG service layer
 ├── tests/                  # Test files
 ├── examples/               # Example documents
 ├── data/                   # Data storage
 │   ├── documents/         # Source documents
 │   └── vector_db/         # ChromaDB storage
 ├── logs/                   # Log files
-├── requirements.txt        # Dependencies
+├── requirements.txt        # Core dependencies
+├── requirements-web.txt    # Web API dependencies
 ├── pyproject.toml         # Project config
 └── README.md              # This file
 ```
