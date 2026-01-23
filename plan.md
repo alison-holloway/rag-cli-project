@@ -412,25 +412,32 @@ Tasks:
 - [x] Handle file validation (PDF, MD, HTML only)
 - [x] Show success/error messages
 
-#### Phase 2.4: Polish & Features (Week 2-3)
+#### Phase 2.4: Polish & Features (Week 2-3) ✅ COMPLETE
 **Goal:** Improve UX and add nice-to-have features
 
 Tasks:
-- [ ] Add chat history display (session-based)
-- [ ] Implement streaming responses (if using Claude API)
-- [ ] Add loading states and spinners
-- [ ] Improve error handling and user feedback
-- [ ] Add settings panel (choose LLM provider, adjust parameters)
-- [ ] Make it responsive (works on different screen sizes)
-- [ ] Add keyboard shortcuts (Enter to send, etc.)
-- [ ] Polish styling and UX
+- [x] Add chat history display (session-based)
+- [x] Add loading states and spinners
+- [x] Improve error handling and user feedback
+- [x] Add settings panel (choose LLM provider, adjust parameters)
+- [x] Make it responsive (works on different screen sizes)
+- [x] Add keyboard shortcuts (Enter to send, etc.)
+- [x] Polish styling and UX
 
-**Optional Enhancements:**
+**Optional Enhancements (COMPLETED):**
+- [x] Code syntax highlighting with highlight.js (10+ languages)
+- [x] Markdown rendering with react-markdown
+- [x] Copy button for answers (with visual feedback)
+- [x] Copy button for code blocks
+- [x] Export chat history (Text and JSON formats)
+- [x] Message timestamps
+- [x] Language detection and display in code blocks
+
+**Optional Enhancements (NOT IMPLEMENTED):**
 - [ ] Dark mode toggle
-- [ ] Code syntax highlighting in responses
-- [ ] Export chat history
 - [ ] Document preview
 - [ ] Search within documents
+- [ ] Streaming responses
 
 ### Dependencies
 

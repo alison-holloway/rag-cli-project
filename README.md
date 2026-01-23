@@ -589,9 +589,32 @@ tail -f logs/frontend.log
 
 **Chat Interface:**
 - Ask questions in a familiar chat-style layout
-- Real-time loading indicators while answers are generated
+- Full chat history persisted during your session
+- Real-time loading indicators with animated "Thinking..." state
 - Expandable sources section shows which documents were used
 - View model used and processing time for each response
+- Timestamps on all messages
+- Clear chat button to start fresh
+
+**Rich Response Rendering:**
+- **Markdown support**: Headings, lists, bold, italic, links, blockquotes
+- **Code syntax highlighting**: Automatic language detection with support for Python, JavaScript, TypeScript, Bash, JSON, SQL, YAML, HTML/CSS, and more
+- Dark theme code blocks with copy button
+- Inline code styling
+
+**Copy & Export:**
+- **Copy answers**: Hover over any response to reveal a copy button
+- **Copy code**: Each code block has its own copy button
+- **Export chat**: Download your entire conversation as:
+  - **Text file** (.txt) - Human-readable format with timestamps
+  - **JSON file** (.json) - Structured data for programmatic use
+
+**Settings Panel:**
+- Toggle between **Ollama** (free, local) and **Claude** (API) providers
+- Adjust **top_k** parameter (1-20 context chunks)
+- Adjust **temperature** (0-1 for response creativity)
+- Settings persist during your session
+- Visual badges show current configuration
 
 **Document Upload:**
 - Drag-and-drop file upload directly in the browser
@@ -606,10 +629,17 @@ tail -f logs/frontend.log
 - Delete documents with one click (with confirmation)
 - Document count badge shows total indexed documents
 
-**Notifications:**
+**Notifications & Error Handling:**
 - Toast notifications for upload success/failure
-- Clear feedback for all document operations
+- Error banner with clear messaging and dismiss button
+- Graceful handling of network errors and API failures
 - Auto-dismiss or manual dismiss options
+
+**Polished UX:**
+- Smooth animations and transitions throughout
+- Responsive design works on desktop and mobile
+- Keyboard shortcuts for efficient navigation
+- User and Assistant avatars for visual distinction
 
 ### Quick Start with Web UI
 
@@ -621,6 +651,43 @@ tail -f logs/frontend.log
 6. When done, run `./stop-web.sh`
 
 **Tip:** You can also pre-index documents via CLI (`rag-cli add ./documents/`) before starting the web UI.
+
+### Settings Panel
+
+Click the **Settings** button in the header to configure query parameters:
+
+**LLM Provider:**
+- **Ollama** (default) - Free, runs locally on your machine
+- **Claude** - Requires `ANTHROPIC_API_KEY` environment variable
+
+**Context Chunks (top_k):**
+- Controls how many document chunks are retrieved for context
+- Range: 1-20 (default: 5)
+- Higher values provide more context but may slow responses
+
+**Temperature:**
+- Controls response creativity/randomness
+- Range: 0.0-1.0 (default: 0.7)
+- Lower = more focused and deterministic
+- Higher = more creative and varied
+
+Settings are displayed as badges in the panel footer and persist during your session.
+
+### Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Enter` | Send message |
+| `Shift+Enter` | New line in message |
+
+### Tips for Efficient Use
+
+- **Use the sidebar** to quickly see what documents are indexed
+- **Adjust top_k** based on your needs: lower for quick answers, higher for comprehensive responses
+- **Export conversations** before clearing chat if you want to save them
+- **Check the sources** to verify answer accuracy
+- **Copy code blocks** directly with the dedicated copy button
+- **Toggle providers** to compare Ollama vs Claude responses
 
 ### Supported File Types
 
@@ -704,9 +771,14 @@ rag-cli-project/
 │   └── src/
 │       ├── App.jsx        # Main React component
 │       ├── components/    # UI components
-│       │   ├── ChatInterface.jsx
-│       │   ├── MessageList.jsx
-│       │   └── MessageInput.jsx
+│       │   ├── ChatInterface.jsx   # Main chat container
+│       │   ├── MessageList.jsx     # Message display with markdown/code
+│       │   ├── MessageInput.jsx    # Input field with send button
+│       │   ├── SettingsPanel.jsx   # LLM and query settings
+│       │   ├── Sidebar.jsx         # Document management sidebar
+│       │   ├── DocumentList.jsx    # Indexed document list
+│       │   ├── DocumentUpload.jsx  # Drag-and-drop upload
+│       │   └── Notification.jsx    # Toast notifications
 │       └── services/
 │           └── api.js     # Backend API client
 ├── tests/                  # Test files

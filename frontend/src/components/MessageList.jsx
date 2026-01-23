@@ -1,10 +1,40 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
+import ReactMarkdown from 'react-markdown';
+import hljs from 'highlight.js/lib/core';
+import javascript from 'highlight.js/lib/languages/javascript';
+import python from 'highlight.js/lib/languages/python';
+import bash from 'highlight.js/lib/languages/bash';
+import json from 'highlight.js/lib/languages/json';
+import sql from 'highlight.js/lib/languages/sql';
+import yaml from 'highlight.js/lib/languages/yaml';
+import xml from 'highlight.js/lib/languages/xml';
+import css from 'highlight.js/lib/languages/css';
+import typescript from 'highlight.js/lib/languages/typescript';
+import 'highlight.js/styles/github.css';
 import './MessageList.css';
+
+// Register languages
+hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('js', javascript);
+hljs.registerLanguage('python', python);
+hljs.registerLanguage('py', python);
+hljs.registerLanguage('bash', bash);
+hljs.registerLanguage('sh', bash);
+hljs.registerLanguage('shell', bash);
+hljs.registerLanguage('json', json);
+hljs.registerLanguage('sql', sql);
+hljs.registerLanguage('yaml', yaml);
+hljs.registerLanguage('yml', yaml);
+hljs.registerLanguage('xml', xml);
+hljs.registerLanguage('html', xml);
+hljs.registerLanguage('css', css);
+hljs.registerLanguage('typescript', typescript);
+hljs.registerLanguage('ts', typescript);
 
 /**
  * Copy button component with feedback
  */
-function CopyButton({ text }) {
+function CopyButton({ text, className = '' }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -19,21 +49,123 @@ function CopyButton({ text }) {
 
   return (
     <button
-      className={`copy-btn ${copied ? 'copied' : ''}`}
+      className={`copy-btn ${copied ? 'copied' : ''} ${className}`}
       onClick={handleCopy}
       title={copied ? 'Copied!' : 'Copy to clipboard'}
     >
       {copied ? (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <polyline points="20 6 9 17 4 12" />
-        </svg>
+        <>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          <span className="copy-label">Copied!</span>
+        </>
       ) : (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-        </svg>
+        <>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </svg>
+          <span className="copy-label">Copy</span>
+        </>
       )}
     </button>
+  );
+}
+
+/**
+ * Code block component with syntax highlighting
+ */
+function CodeBlock({ children, className }) {
+  const codeRef = useRef(null);
+  const language = className?.replace('language-', '') || '';
+  const code = String(children).replace(/\n$/, '');
+
+  const highlightedCode = useMemo(() => {
+    if (language && hljs.getLanguage(language)) {
+      try {
+        return hljs.highlight(code, { language }).value;
+      } catch (e) {
+        console.error('Highlight error:', e);
+      }
+    }
+    // Auto-detect language
+    try {
+      return hljs.highlightAuto(code).value;
+    } catch (e) {
+      return code;
+    }
+  }, [code, language]);
+
+  return (
+    <div className="code-block-wrapper">
+      <div className="code-block-header">
+        <span className="code-language">{language || 'code'}</span>
+        <CopyButton text={code} className="code-copy-btn" />
+      </div>
+      <pre className="code-block">
+        <code
+          ref={codeRef}
+          className={className}
+          dangerouslySetInnerHTML={{ __html: highlightedCode }}
+        />
+      </pre>
+    </div>
+  );
+}
+
+/**
+ * Inline code component
+ */
+function InlineCode({ children }) {
+  return <code className="inline-code">{children}</code>;
+}
+
+/**
+ * Format timestamp for display
+ */
+function formatTimestamp(date) {
+  if (!date) return '';
+  const d = new Date(date);
+  return d.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+}
+
+/**
+ * Markdown renderer with custom components
+ */
+function MarkdownContent({ content }) {
+  return (
+    <ReactMarkdown
+      components={{
+        code({ node, inline, className, children, ...props }) {
+          if (inline) {
+            return <InlineCode {...props}>{children}</InlineCode>;
+          }
+          return <CodeBlock className={className}>{children}</CodeBlock>;
+        },
+        // Style links
+        a({ node, children, ...props }) {
+          return (
+            <a {...props} target="_blank" rel="noopener noreferrer">
+              {children}
+            </a>
+          );
+        },
+        // Style lists
+        ul({ node, children, ...props }) {
+          return <ul className="markdown-list" {...props}>{children}</ul>;
+        },
+        ol({ node, children, ...props }) {
+          return <ol className="markdown-list ordered" {...props}>{children}</ol>;
+        },
+      }}
+    >
+      {content}
+    </ReactMarkdown>
   );
 }
 
@@ -101,14 +233,27 @@ function MessageList({ messages }) {
             ) : (
               <>
                 <div className="message-header">
-                  <span className="message-role">
-                    {message.role === 'user' ? 'You' : 'Assistant'}
-                  </span>
+                  <div className="message-header-left">
+                    <span className="message-role">
+                      {message.role === 'user' ? 'You' : 'Assistant'}
+                    </span>
+                    {message.timestamp && (
+                      <span className="message-time">
+                        {formatTimestamp(message.timestamp)}
+                      </span>
+                    )}
+                  </div>
                   {message.role === 'assistant' && message.content && (
                     <CopyButton text={message.content} />
                   )}
                 </div>
-                <div className="message-text">{message.content}</div>
+                <div className="message-text">
+                  {message.role === 'assistant' ? (
+                    <MarkdownContent content={message.content} />
+                  ) : (
+                    message.content
+                  )}
+                </div>
                 {message.sources && message.sources.length > 0 && (
                   <div className="sources">
                     <details>

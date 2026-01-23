@@ -6,6 +6,80 @@ import { queryKnowledgeBase } from '../services/api';
 import './ChatInterface.css';
 
 /**
+ * Format date for export
+ */
+function formatDate(date) {
+  if (!date) return '';
+  return new Date(date).toLocaleString();
+}
+
+/**
+ * Export chat as JSON file
+ */
+function exportAsJSON(messages) {
+  const exportData = {
+    exportedAt: new Date().toISOString(),
+    messageCount: messages.length,
+    messages: messages.map((msg) => ({
+      role: msg.role,
+      content: msg.content,
+      timestamp: msg.timestamp,
+      ...(msg.sources && { sources: msg.sources }),
+      ...(msg.metadata && { metadata: msg.metadata }),
+    })),
+  };
+
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `rag-chat-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Export chat as text file
+ */
+function exportAsText(messages) {
+  let text = `RAG CLI Chat Export\n`;
+  text += `Exported: ${formatDate(new Date())}\n`;
+  text += `${'='.repeat(50)}\n\n`;
+
+  messages.forEach((msg) => {
+    const role = msg.role === 'user' ? 'You' : 'Assistant';
+    const time = msg.timestamp ? ` (${formatDate(msg.timestamp)})` : '';
+    text += `${role}${time}:\n`;
+    text += `${msg.content}\n`;
+
+    if (msg.sources && msg.sources.length > 0) {
+      text += `\nSources:\n`;
+      msg.sources.forEach((source, i) => {
+        text += `  ${i + 1}. ${source.file} (${(source.similarity * 100).toFixed(0)}% match)\n`;
+      });
+    }
+
+    if (msg.metadata) {
+      text += `\n[Model: ${msg.metadata.model}, Time: ${msg.metadata.processing_time_ms.toFixed(0)}ms]\n`;
+    }
+
+    text += `\n${'-'.repeat(50)}\n\n`;
+  });
+
+  const blob = new Blob([text], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `rag-chat-${new Date().toISOString().slice(0, 10)}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/**
  * Main chat interface component
  */
 function ChatInterface() {
@@ -13,6 +87,7 @@ function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
   const [settings, setSettings] = useState({
     llmProvider: 'ollama',
     topK: 5,
@@ -90,6 +165,15 @@ function ChatInterface() {
     setSettings((prev) => ({ ...prev, ...newSettings }));
   };
 
+  const handleExport = (format) => {
+    if (format === 'json') {
+      exportAsJSON(messages);
+    } else {
+      exportAsText(messages);
+    }
+    setShowExportMenu(false);
+  };
+
   return (
     <div className="chat-interface">
       <div className="chat-header">
@@ -99,17 +183,54 @@ function ChatInterface() {
         </div>
         <div className="header-actions">
           {messages.length > 0 && (
-            <button
-              className="header-btn clear-btn"
-              onClick={handleClearChat}
-              title="Clear chat history"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-              </svg>
-              <span>Clear</span>
-            </button>
+            <>
+              <div className="export-dropdown">
+                <button
+                  className={`header-btn export-btn ${showExportMenu ? 'active' : ''}`}
+                  onClick={() => setShowExportMenu(!showExportMenu)}
+                  title="Export chat"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  <span>Export</span>
+                </button>
+                {showExportMenu && (
+                  <div className="export-menu">
+                    <button onClick={() => handleExport('text')}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                        <polyline points="10 9 9 9 8 9" />
+                      </svg>
+                      Export as Text
+                    </button>
+                    <button onClick={() => handleExport('json')}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="16 18 22 12 16 6" />
+                        <polyline points="8 6 2 12 8 18" />
+                      </svg>
+                      Export as JSON
+                    </button>
+                  </div>
+                )}
+              </div>
+              <button
+                className="header-btn clear-btn"
+                onClick={handleClearChat}
+                title="Clear chat history"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+                <span>Clear</span>
+              </button>
+            </>
           )}
           <button
             className={`header-btn settings-btn ${showSettings ? 'active' : ''}`}
