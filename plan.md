@@ -235,6 +235,28 @@ These features were added after the initial Phase 1 POC was completed:
 - **Usage**: `./start-web.sh` to start, `./stop-web.sh` to stop
 - **Status**: Completed
 
+#### 4. Dark Mode Toggle (Added: Jan 2026)
+- **What**: Toggle between light and dark color schemes in the web UI
+- **Why**: Reduce eye strain, user preference, modern UX standard
+- **Implementation**:
+  - Toggle switch in header/settings panel
+  - Two complete color schemes (light/dark)
+  - Persist preference in localStorage
+  - Smooth transitions between modes
+  - All components support both modes
+- **Status**: Completed
+
+#### 5. User Documentation (Added: Jan 2026)
+- **What**: Comprehensive user guide separate from the technical README
+- **Why**: Provide non-technical users with easy-to-follow instructions
+- **Implementation**:
+  - Create USER_GUIDE.md or docs/ folder
+  - Step-by-step tutorials with screenshots
+  - Common use cases and examples
+  - Troubleshooting guide
+  - FAQ section
+- **Status**: Pending implementation
+
 ## Phase 2: Web UI (Local Development)
 
 ### Overview
@@ -433,11 +455,12 @@ Tasks:
 - [x] Message timestamps
 - [x] Language detection and display in code blocks
 
-**Optional Enhancements (NOT IMPLEMENTED):**
-- [ ] Dark mode toggle
+**Optional Enhancements (NOT IMPLEMENTED - Future Goals):**
 - [ ] Document preview
 - [ ] Search within documents
-- [ ] Streaming responses
+- [ ] Streaming responses (for Claude API)
+
+**Note:** Dark mode toggle was moved to a separate post-Phase 2 enhancement (see Post-Phase 1 Enhancements section)
 
 ### Dependencies
 

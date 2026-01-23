@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { ThemeProvider } from './context/ThemeContext';
 import ChatInterface from './components/ChatInterface';
 import Sidebar from './components/Sidebar';
 import { NotificationContainer } from './components/Notification';
@@ -22,20 +23,22 @@ function App() {
   }, []);
 
   return (
-    <div className="app">
-      <main className="main-content">
-        <ChatInterface />
-      </main>
-      <Sidebar
-        isOpen={sidebarOpen}
-        onToggle={toggleSidebar}
-        onNotification={addNotification}
-      />
-      <NotificationContainer
-        notifications={notifications}
-        onDismiss={removeNotification}
-      />
-    </div>
+    <ThemeProvider>
+      <div className="app">
+        <main className="main-content">
+          <ChatInterface />
+        </main>
+        <Sidebar
+          isOpen={sidebarOpen}
+          onToggle={toggleSidebar}
+          onNotification={addNotification}
+        />
+        <NotificationContainer
+          notifications={notifications}
+          onDismiss={removeNotification}
+        />
+      </div>
+    </ThemeProvider>
   );
 }
 

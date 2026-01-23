@@ -1,0 +1,85 @@
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 9999px;
+}
+
+.toggle-track {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  padding: 2px;
+  transition: background 0.3s ease;
+}
+
+.theme-toggle.dark .toggle-track {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-toggle.dark .toggle-thumb {
+  transform: translateX(24px);
+}
+
+.toggle-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.toggle-icon.sun {
+  left: 6px;
+  color: #fbbf24;
+  opacity: 1;
+}
+
+.toggle-icon.moon {
+  right: 6px;
+  color: #fcd34d;
+  opacity: 0.5;
+}
+
+.theme-toggle.dark .toggle-icon.sun {
+  opacity: 0.5;
+}
+
+.theme-toggle.dark .toggle-icon.moon {
+  opacity: 1;
+}
+
+/* Hover effects */
+.theme-toggle:hover .toggle-track {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.theme-toggle.dark:hover .toggle-track {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+  border-radius: 9999px;
+}

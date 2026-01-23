@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import MessageList from './MessageList';
 import MessageInput from './MessageInput';
 import SettingsPanel from './SettingsPanel';
+import ThemeToggle from './ThemeToggle';
 import { queryKnowledgeBase } from '../services/api';
 import './ChatInterface.css';
 
@@ -243,6 +244,7 @@ function ChatInterface() {
             </svg>
             <span>Settings</span>
           </button>
+          <ThemeToggle />
         </div>
       </div>
 

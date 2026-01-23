@@ -640,6 +640,15 @@ tail -f logs/frontend.log
 - Responsive design works on desktop and mobile
 - Keyboard shortcuts for efficient navigation
 - User and Assistant avatars for visual distinction
+- Dark mode support for comfortable viewing
+
+**Dark Mode:**
+- Toggle between light and dark themes using the sun/moon switch in the header
+- Your preference is automatically saved and persists across sessions
+- Detects system preference on first visit (follows your OS setting)
+- Smooth transitions when switching themes
+- All UI components adapt: chat, settings, sidebar, notifications
+- Code blocks use a dark theme in both modes for optimal readability
 
 ### Quick Start with Web UI
 
@@ -688,6 +697,7 @@ Settings are displayed as badges in the panel footer and persist during your ses
 - **Check the sources** to verify answer accuracy
 - **Copy code blocks** directly with the dedicated copy button
 - **Toggle providers** to compare Ollama vs Claude responses
+- **Enable dark mode** for comfortable viewing during extended sessions or low-light environments
 
 ### Supported File Types
 
