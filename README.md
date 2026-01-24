@@ -1,6 +1,6 @@
 # RAG CLI
 
-A Retrieval-Augmented Generation (RAG) system for querying your documents using local LLMs. Available as a CLI, REST API, or Web UI.
+A Retrieval-Augmented Generation (RAG) system for querying your documents using local LLMs. Available as a CLI, REST API, Web UI, or native macOS Desktop App.
 
 ## Features
 
@@ -13,6 +13,7 @@ A Retrieval-Augmented Generation (RAG) system for querying your documents using 
   - **CLI**: Command-line interface for terminal users
   - **REST API**: FastAPI backend for programmatic access
   - **Web UI**: React-based chat interface in your browser
+  - **Desktop App**: Native macOS application with system integration
 
 ## Quick Start
 
@@ -725,6 +726,38 @@ cd frontend
 npm run dev
 ```
 
+## macOS Desktop App
+
+RAG Assistant is also available as a native macOS desktop application, built with [Tauri](https://tauri.app/) for a lightweight, high-performance experience.
+
+### Key Features
+
+- **Native macOS Integration**: Full menu bar, system notifications, and dock integration
+- **Keyboard Shortcuts**: Cmd+N (new chat), Cmd+K (focus search), Cmd+Shift+D (dark mode)
+- **File Associations**: Double-click .txt, .md, or .pdf files to open with RAG Assistant
+- **Lightweight**: 5.4MB app bundle, 2.9MB DMG installer
+- **Offline-First**: All processing happens locally on your machine
+
+### Installation
+
+1. Download `RAG Assistant_0.1.0_aarch64.dmg` from releases
+2. Open the DMG and drag RAG Assistant to Applications
+3. On first launch, right-click and select "Open" (required for unsigned apps)
+
+**Prerequisites**: Python 3.9+ and [Ollama](https://ollama.ai) must be installed.
+
+### Quick Start
+
+1. Ensure Ollama is running (`ollama serve`)
+2. Double-click RAG Assistant in Applications
+3. Upload documents via the sidebar
+4. Start asking questions!
+
+### Documentation
+
+- **User Guide**: See [desktop/README.md](desktop/README.md) for full documentation
+- **Build Instructions**: See [desktop/BUILDING.md](desktop/BUILDING.md) to build from source
+
 ## Development
 
 ### Running Tests
@@ -774,23 +807,30 @@ rag-cli-project/
 │   │   └── routes.py      # API routes
 │   └── services/
 │       └── rag_service.py # RAG service layer
-├── frontend/               # React web UI
+├── frontend/               # React web UI & Tauri desktop app
 │   ├── package.json       # Node.js dependencies
 │   ├── vite.config.js     # Vite configuration
 │   ├── index.html         # HTML entry point
-│   └── src/
-│       ├── App.jsx        # Main React component
-│       ├── components/    # UI components
-│       │   ├── ChatInterface.jsx   # Main chat container
-│       │   ├── MessageList.jsx     # Message display with markdown/code
-│       │   ├── MessageInput.jsx    # Input field with send button
-│       │   ├── SettingsPanel.jsx   # LLM and query settings
-│       │   ├── Sidebar.jsx         # Document management sidebar
-│       │   ├── DocumentList.jsx    # Indexed document list
-│       │   ├── DocumentUpload.jsx  # Drag-and-drop upload
-│       │   └── Notification.jsx    # Toast notifications
-│       └── services/
-│           └── api.js     # Backend API client
+│   ├── src/               # React source code
+│   │   ├── App.jsx        # Main React component
+│   │   ├── components/    # UI components
+│   │   │   ├── ChatInterface.jsx   # Main chat container
+│   │   │   ├── MessageList.jsx     # Message display with markdown/code
+│   │   │   ├── MessageInput.jsx    # Input field with send button
+│   │   │   ├── SettingsPanel.jsx   # LLM and query settings
+│   │   │   ├── Sidebar.jsx         # Document management sidebar
+│   │   │   ├── DocumentList.jsx    # Indexed document list
+│   │   │   ├── DocumentUpload.jsx  # Drag-and-drop upload
+│   │   │   └── Notification.jsx    # Toast notifications
+│   │   └── services/
+│   │       └── api.js     # Backend API client
+│   └── src-tauri/         # Tauri/Rust desktop app
+│       ├── Cargo.toml     # Rust dependencies
+│       ├── tauri.conf.json # App configuration
+│       └── src/           # Rust source code
+├── desktop/                # Desktop app documentation
+│   ├── README.md          # User guide
+│   └── BUILDING.md        # Build instructions
 ├── tests/                  # Test files
 ├── examples/               # Example documents
 ├── data/                   # Data storage
@@ -956,3 +996,5 @@ MIT License - see LICENSE file for details.
 - [Ollama](https://ollama.ai/) for local LLM inference
 - [Rich](https://rich.readthedocs.io/) for terminal formatting
 - [Click](https://click.palletsprojects.com/) for CLI framework
+- [Tauri](https://tauri.app/) for native desktop app framework
+- [FastAPI](https://fastapi.tiangolo.com/) for REST API backend

@@ -2,7 +2,42 @@
  * API client for communicating with the RAG backend
  */
 
-const API_BASE_URL = 'http://localhost:8000/api';
+// Default URL for browser development
+let API_BASE_URL = 'http://localhost:8000/api';
+
+// Check if running in Tauri and get dynamic URL
+const initApiUrl = async () => {
+  if (window.__TAURI__) {
+    try {
+      const { invoke } = await import('@tauri-apps/api/core');
+      const baseUrl = await invoke('get_api_url');
+      API_BASE_URL = `${baseUrl}/api`;
+      console.log('API URL set from Tauri:', API_BASE_URL);
+    } catch (error) {
+      console.warn('Failed to get API URL from Tauri, using default:', error);
+    }
+  }
+};
+
+// Initialize API URL
+initApiUrl();
+
+/**
+ * Get the current API base URL
+ * @returns {string} API base URL
+ */
+export function getApiBaseUrl() {
+  return API_BASE_URL;
+}
+
+/**
+ * Set the API base URL (used when backend starts on dynamic port)
+ * @param {string} baseUrl - The new base URL (without /api suffix)
+ */
+export function setApiBaseUrl(baseUrl) {
+  API_BASE_URL = `${baseUrl}/api`;
+  console.log('API URL updated to:', API_BASE_URL);
+}
 
 /**
  * Query the knowledge base with a question

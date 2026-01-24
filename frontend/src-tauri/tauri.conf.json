@@ -1,0 +1,74 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "RAG Assistant",
+  "version": "0.1.0",
+  "identifier": "com.student.rag-assistant",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:5173",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "RAG Assistant",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 800,
+        "minHeight": 600,
+        "resizable": true,
+        "fullscreen": false,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "DeveloperTool",
+    "shortDescription": "Local Document Intelligence with RAG",
+    "longDescription": "RAG Assistant is a local document intelligence tool that uses Retrieval-Augmented Generation to answer questions about your documents.",
+    "macOS": {
+      "minimumSystemVersion": "10.15",
+      "entitlements": null,
+      "exceptionDomain": null,
+      "frameworks": [],
+      "providerShortName": null,
+      "signingIdentity": null
+    },
+    "fileAssociations": [
+      {
+        "ext": ["txt"],
+        "name": "Text Document",
+        "description": "Plain text document",
+        "role": "Viewer",
+        "mimeType": "text/plain"
+      },
+      {
+        "ext": ["md", "markdown"],
+        "name": "Markdown Document",
+        "description": "Markdown document",
+        "role": "Viewer",
+        "mimeType": "text/markdown"
+      },
+      {
+        "ext": ["pdf"],
+        "name": "PDF Document",
+        "description": "PDF document",
+        "role": "Viewer",
+        "mimeType": "application/pdf"
+      }
+    ]
+  }
+}

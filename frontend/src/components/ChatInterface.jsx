@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import MessageList from './MessageList';
 import MessageInput from './MessageInput';
 import SettingsPanel from './SettingsPanel';
@@ -83,7 +83,7 @@ function exportAsText(messages) {
 /**
  * Main chat interface component
  */
-function ChatInterface() {
+const ChatInterface = forwardRef(function ChatInterface(props, ref) {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -95,8 +95,56 @@ function ChatInterface() {
     temperature: 0.7,
   });
 
+  const inputRef = useRef(null);
+
   // Generate unique message ID
   const generateId = () => `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+  // Expose methods to parent via ref
+  useImperativeHandle(ref, () => ({
+    clearChat: () => {
+      setMessages([]);
+      setError(null);
+    },
+    openExport: () => {
+      setShowExportMenu(true);
+    },
+    focusInput: () => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    },
+  }));
+
+  // Listen for custom events from menu
+  useEffect(() => {
+    const handleNewChat = () => {
+      setMessages([]);
+      setError(null);
+    };
+
+    const handleExportChat = () => {
+      if (messages.length > 0) {
+        setShowExportMenu(true);
+      }
+    };
+
+    const handleFocusSearch = () => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    };
+
+    window.addEventListener('app-new-chat', handleNewChat);
+    window.addEventListener('app-export-chat', handleExportChat);
+    window.addEventListener('app-focus-search', handleFocusSearch);
+
+    return () => {
+      window.removeEventListener('app-new-chat', handleNewChat);
+      window.removeEventListener('app-export-chat', handleExportChat);
+      window.removeEventListener('app-focus-search', handleFocusSearch);
+    };
+  }, [messages.length]);
 
   const handleSend = useCallback(async (question) => {
     // Clear any previous error
@@ -272,9 +320,9 @@ function ChatInterface() {
 
       <MessageList messages={messages} />
 
-      <MessageInput onSend={handleSend} disabled={isLoading} />
+      <MessageInput ref={inputRef} onSend={handleSend} disabled={isLoading} />
     </div>
   );
-}
+});
 
 export default ChatInterface;

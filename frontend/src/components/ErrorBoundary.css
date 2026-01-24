@@ -1,0 +1,114 @@
+.error-boundary {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.error-boundary-content {
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-boundary-icon {
+  color: #ef4444;
+  margin-bottom: 1.5rem;
+}
+
+.error-boundary-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.75rem;
+}
+
+.error-boundary-message {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 1.5rem;
+}
+
+.error-boundary-details {
+  text-align: left;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.error-boundary-details summary {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+}
+
+.error-boundary-details pre {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.error-boundary-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.error-boundary-button {
+  padding: 0.875rem 1.5rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.error-boundary-button.primary {
+  background: var(--accent-gradient);
+  color: white;
+  border: none;
+}
+
+.error-boundary-button.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+}
+
+.error-boundary-button.secondary {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.error-boundary-button.secondary:hover {
+  background: var(--bg-hover);
+}
+
+.error-boundary-button.danger {
+  background: transparent;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+}
+
+.error-boundary-button.danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+}

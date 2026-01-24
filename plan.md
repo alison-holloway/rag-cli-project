@@ -19,7 +19,7 @@ Build a command-line RAG (Retrieval-Augmented Generation) system that processes 
   - BeautifulSoup4 for HTML parsing
 - **Embeddings**: sentence-transformers (local, no API costs)
 - **Vector Store**: ChromaDB (lightweight, persistent, local)
-- **LLM Integration**: 
+- **LLM Integration**:
   - **Default**: Local models via Ollama (Llama 3.1 - FREE, fully local)
   - **Optional Upgrade**: Anthropic Claude API (better quality, requires API key and costs money)
   - Note: You already have Ollama installed!
@@ -30,9 +30,99 @@ Build a command-line RAG (Retrieval-Augmented Generation) system that processes 
 - **Python Version**: 3.13 (using 3.13 instead of 3.14 for ChromaDB compatibility)
 - **Dependency Management**: pip + requirements.txt or Poetry
 
-## System Architecture
+## Prerequisites & Setup
 
-### Phase 1: CLI Application (POC)
+### What You Already Have
+- Python 3.13 installed (downgraded from 3.14 for ChromaDB compatibility)
+- Ollama 0.13.0 installed
+- macOS with M3 chip
+
+### What You Need to Install
+**Nothing else!** All dependencies will be installed via pip when you set up the project:
+- ChromaDB - installed via `pip install chromadb` (no separate installation needed)
+- sentence-transformers - installed via pip
+- All other Python libraries - installed via pip
+
+ChromaDB is just a Python library, not a separate database server. It runs entirely within your Python application and stores data as files on disk.
+
+### First-Time Model Downloads (Automatic)
+When you first run the RAG system, these will download automatically:
+1. **Embedding model** (~80MB): `all-MiniLM-L6-v2` downloads on first use
+2. **Llama model** (if not already pulled): Run `ollama pull llama3.1:8b` (about 4.7GB)
+
+You can pre-download the Llama model now to save time later:
+```bash
+ollama pull llama3.1:8b
+```
+
+## Configuration
+
+### Environment Variables (.env)
+```
+# LLM Configuration (Ollama is default - FREE and local!)
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=llama3.1:8b
+
+# Optional: Claude API (only needed if using --llm claude flag)
+# ANTHROPIC_API_KEY=your_key_here
+
+# Vector Store
+CHROMA_PERSIST_DIR=./data/vector_db
+
+# Embedding Model
+EMBEDDING_MODEL=all-MiniLM-L6-v2
+
+# Chunking Parameters
+CHUNK_SIZE=800
+CHUNK_OVERLAP=100
+
+# Retrieval
+TOP_K_RESULTS=5
+
+# LLM Parameters
+DEFAULT_LLM_PROVIDER=ollama  # Default to free local option
+LLM_TEMPERATURE=0.3
+MAX_TOKENS=2000
+```
+
+## Dependencies (requirements.txt)
+
+```
+# CLI
+click>=8.1.0
+rich>=13.0.0  # Beautiful terminal output
+
+# Document Processing
+pypdf>=3.17.0
+markdown>=3.5.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Embeddings & Vector Store
+sentence-transformers>=2.2.0
+chromadb>=0.4.0
+numpy>=1.24.0
+
+# LLM Integration
+ollama>=0.13.0  # FREE local LLM (default) - you already have v0.13.0 installed!
+# anthropic>=0.18.0  # Optional: uncomment if using --llm claude flag
+
+# Utilities
+python-dotenv>=1.0.0
+pydantic>=2.0.0  # Configuration validation
+tqdm>=4.66.0  # Progress bars
+
+# Development
+pytest>=7.4.0
+black>=23.0.0
+ruff>=0.1.0
+```
+
+---
+
+## Phase 1: CLI Application (POC)
+
+### System Architecture
 
 ```
 rag-cli/
@@ -101,17 +191,17 @@ rag-cli/
 - Prompt engineering:
   ```
   Context: {retrieved_chunks}
-  
+
   Question: {user_question}
-  
+
   Answer based only on the provided context. If the answer isn't in the context, say so.
   ```
 - Streaming responses (for better UX)
 - Error handling and retry logic
 
-## CLI Commands
+### CLI Commands
 
-### Basic Commands
+#### Basic Commands
 ```bash
 # Initialize a new RAG project (auto-starts Ollama and pulls model if needed)
 rag-cli init [project_name]
@@ -145,7 +235,7 @@ rag-cli clear --confirm
 rag-cli stats
 ```
 
-### Advanced Commands (Optional)
+#### Advanced Commands (Optional)
 ```bash
 # Configure chunk size
 rag-cli config set chunk_size 800
@@ -163,44 +253,105 @@ rag-cli export knowledge_base.zip
 rag-cli import knowledge_base.zip
 ```
 
-## Implementation Phases
+### Implementation Phases
 
-### Phase 1.1: Basic Infrastructure (Week 1)
+#### Phase 1.1: Basic Infrastructure (Week 1)
 - [ ] Set up Python project structure
 - [ ] Implement CLI framework (Click/Typer)
 - [ ] Create configuration system (.env, config files)
 - [ ] Set up logging
 - [ ] Basic error handling
 
-### Phase 1.2: Document Processing (Week 1-2)
+#### Phase 1.2: Document Processing (Week 1-2)
 - [ ] Implement PDF text extraction
 - [ ] Implement Markdown parsing
 - [ ] Implement HTML parsing
 - [ ] Test with sample documents
 - [ ] Add metadata extraction
 
-### Phase 1.3: Embedding & Vector Store (Week 2)
+#### Phase 1.3: Embedding & Vector Store (Week 2)
 - [ ] Integrate sentence-transformers
 - [ ] Implement text chunking with overlap
 - [ ] Set up ChromaDB
 - [ ] Create vector store interface
 - [ ] Test embedding and storage pipeline
 
-### Phase 1.4: Retrieval & Generation (Week 2-3)
+#### Phase 1.4: Retrieval & Generation (Week 2-3)
 - [ ] Implement similarity search
 - [ ] Integrate LLM API (Claude)
 - [ ] Build prompt templates
 - [ ] Create query pipeline
 - [ ] Test end-to-end RAG flow
 
-### Phase 1.5: Polish & Testing (Week 3)
+#### Phase 1.5: Polish & Testing (Week 3)
 - [ ] Add comprehensive error messages
 - [ ] Implement progress indicators
 - [ ] Write unit tests
 - [ ] Create user documentation
 - [ ] Add example documents and queries
 
-### Post-Phase 1 Enhancements
+### Phase 1 Testing
+
+#### Manual Testing Checklist
+- [ ] Add single PDF document
+- [ ] Add multiple documents in batch
+- [ ] Query with expected answer in docs
+- [ ] Query with answer NOT in docs (should say so)
+- [ ] Handle corrupted/invalid files gracefully
+- [ ] Test with large documents (>100 pages)
+- [ ] Test with various document formats
+
+### Phase 1 Success Criteria
+
+#### Minimum Viable Product (MVP)
+- Successfully parse PDF, MD, and HTML files
+- Create and persist vector embeddings
+- Retrieve relevant context for queries
+- Generate accurate answers using LLM
+- Handle errors gracefully with helpful messages
+- Complete documentation and usage examples
+
+#### Quality Metrics
+- **Retrieval Accuracy**: >80% of relevant chunks retrieved in top-5
+- **Response Quality**: Answers are factual and cite source chunks
+- **Performance**: Process 100-page PDF in <30 seconds
+- **UX**: Clear CLI output with progress indicators
+
+### Cost Considerations (Student-Friendly!)
+
+#### 100% Free Option (Recommended for Learning)
+**Total Cost: $0**
+- Local embeddings (sentence-transformers): FREE
+- Local vector store (ChromaDB): FREE
+- Local LLM (Ollama/Llama): FREE
+- All data stays on your Mac
+- Works offline
+
+This setup is completely free and perfect for learning. You won't have any API costs.
+
+#### Optional Paid Upgrade
+**When you might want Claude API:**
+- Need highest quality answers for important work
+- Comparing your RAG system's performance
+- Presentations or demonstrations
+
+**Cost if using Claude:**
+- Claude Sonnet 4: ~$3 per million input tokens, ~$15 per million output tokens
+- Estimated usage for learning: $5-20 total (can set spending limits in Anthropic console)
+- You can add your API key later without changing any code!
+
+#### Command Line Examples
+```bash
+# Your default (FREE!)
+rag-cli query "What is X?"  # Uses Llama via Ollama
+
+# When you want premium quality (PAID)
+rag-cli query "What is X?" --llm claude  # Uses Claude API
+```
+
+---
+
+## Post-Phase 1 Enhancements
 
 ### Feature Additions (After POC Complete)
 These features were added after the initial Phase 1 POC was completed:
@@ -208,7 +359,7 @@ These features were added after the initial Phase 1 POC was completed:
 #### 1. Automatic Ollama Setup (Added: Jan 2026)
 - **What**: `rag-cli init` now automatically starts Ollama and pulls llama3.1:8b if not available
 - **Why**: Improves user experience by eliminating manual Ollama setup steps
-- **Implementation**: 
+- **Implementation**:
   - Check if Ollama is running, start if needed
   - Check if llama3.1:8b is pulled, pull if needed
   - Show progress indicators during setup
@@ -257,6 +408,8 @@ These features were added after the initial Phase 1 POC was completed:
   - FAQ section
 - **Status**: Pending implementation
 
+---
+
 ## Phase 2: Web UI (Local Development)
 
 ### Overview
@@ -269,13 +422,13 @@ Build a local web interface for the RAG system using FastAPI backend and React f
   - Why: Matches existing Python skills, auto API docs, async support
   - Serves REST API endpoints
   - Reuses existing RAG CLI components
-  
-#### Frontend  
+
+#### Frontend
 - **React 18+** with **Vite** - Modern frontend framework
   - Why: Industry standard, great learning opportunity, fast development
   - TypeScript optional (recommend starting with JavaScript)
   - Component-based architecture
-  
+
 #### Development Setup
 - **Local only** - Both frontend and backend run on localhost
 - **No database needed initially** - Use in-memory session storage
@@ -358,7 +511,7 @@ rag-cli-project/
 
 ### Implementation Phases
 
-#### Phase 2.1: Backend API Setup (Week 1) ✅ COMPLETE
+#### Phase 2.1: Backend API Setup (Week 1) - COMPLETE
 **Goal:** Create FastAPI backend that exposes RAG functionality via REST API
 
 Tasks:
@@ -398,7 +551,7 @@ Tasks:
 }
 ```
 
-#### Phase 2.2: Frontend Setup (Week 1-2) ✅ COMPLETE
+#### Phase 2.2: Frontend Setup (Week 1-2) - COMPLETE
 **Goal:** Create basic React app with chat interface
 
 Tasks:
@@ -422,7 +575,7 @@ Tasks:
 // SettingsPanel.jsx - LLM provider toggle
 ```
 
-#### Phase 2.3: Document Upload (Week 2) ✅ COMPLETE
+#### Phase 2.3: Document Upload (Week 2) - COMPLETE
 **Goal:** Add document upload functionality to UI
 
 Tasks:
@@ -434,7 +587,7 @@ Tasks:
 - [x] Handle file validation (PDF, MD, HTML only)
 - [x] Show success/error messages
 
-#### Phase 2.4: Polish & Features (Week 2-3) ✅ COMPLETE
+#### Phase 2.4: Polish & Features (Week 2-3) - COMPLETE
 **Goal:** Improve UX and add nice-to-have features
 
 Tasks:
@@ -446,7 +599,7 @@ Tasks:
 - [x] Add keyboard shortcuts (Enter to send, etc.)
 - [x] Polish styling and UX
 
-**Optional Enhancements (COMPLETED):**
+**Completed Enhancements:**
 - [x] Code syntax highlighting with highlight.js (10+ languages)
 - [x] Markdown rendering with react-markdown
 - [x] Copy button for answers (with visual feedback)
@@ -455,16 +608,13 @@ Tasks:
 - [x] Message timestamps
 - [x] Language detection and display in code blocks
 
-**Optional Enhancements (NOT IMPLEMENTED - Future Goals):**
+**Future Enhancements (Not Implemented):**
 - [ ] Document preview
 - [ ] Search within documents
 - [ ] Streaming responses (for Claude API)
 
-**Note:** Dark mode toggle was moved to a separate post-Phase 2 enhancement (see Post-Phase 1 Enhancements section)
+### Phase 2 Dependencies (requirements-web.txt)
 
-### Dependencies
-
-#### Backend (requirements-web.txt)
 ```
 # Existing dependencies from requirements.txt
 # Plus new web dependencies:
@@ -481,7 +631,7 @@ python-cors>=1.0.0
 pydantic>=2.0.0
 ```
 
-#### Frontend (package.json)
+**Frontend (package.json)**
 ```json
 {
   "dependencies": {
@@ -555,48 +705,7 @@ Then open browser to `http://localhost:5173`
 4. **Test** - Use browser for frontend, check backend logs for API calls
 5. **Commit** - Git commit when features work
 
-### Success Criteria
-
-**Phase 2 MVP:**
-- ✅ Can upload documents via web UI
-- ✅ Can ask questions in chat interface
-- ✅ Answers appear with sources cited
-- ✅ Can toggle between Ollama and Claude
-- ✅ Works smoothly on localhost
-- ✅ Clean, intuitive UI
-
-**Quality Metrics:**
-- Response time: <5 seconds for queries (with Llama)
-- UI is responsive and doesn't freeze
-- Error messages are clear and helpful
-- Works in Chrome/Firefox/Safari
-
-### Learning Resources
-
-**FastAPI:**
-- Official tutorial: https://fastapi.tiangolo.com/tutorial/
-- Focus on: path operations, request/response models, file uploads
-
-**React:**
-- Official tutorial: https://react.dev/learn
-- Focus on: components, props, state (useState), effects (useEffect)
-
-**Vite:**
-- Quick start: https://vitejs.dev/guide/
-- Just need basics - Vite makes setup easy
-
-### Cost Considerations
-
-**Still 100% Free!**
-- ✅ FastAPI: Free and open source
-- ✅ React: Free and open source
-- ✅ Vite: Free and open source
-- ✅ Running locally: No hosting costs
-- ✅ Same free Ollama/Llama backend
-
-Only cost is if you use Claude API via the UI (same as CLI).
-
-### Testing Strategy
+### Phase 2 Testing
 
 **Manual Testing Checklist:**
 - [ ] Upload a PDF document
@@ -613,246 +722,344 @@ Only cost is if you use Claude API via the UI (same as CLI).
 - Backend: pytest with FastAPI TestClient
 - (Add later, manual testing fine for learning)
 
-### Future Enhancements (Phase 3+)
+### Phase 2 Success Criteria
 
-These can wait until Phase 2 is working:
-- **Persistent chat history** - Save conversations to disk/DB
-- **User accounts** - Multi-user support
-- **Deployment** - Deploy to cloud (Vercel, Railway, etc.)
-- **Real-time updates** - WebSocket for streaming responses
-- **Advanced features** - Document preview, search, analytics
-- **Mobile app** - React Native version
+**Phase 2 MVP:**
+- Can upload documents via web UI
+- Can ask questions in chat interface
+- Answers appear with sources cited
+- Can toggle between Ollama and Claude
+- Works smoothly on localhost
+- Clean, intuitive UI
 
-### Next Steps for Phase 2
+**Quality Metrics:**
+- Response time: <5 seconds for queries (with Llama)
+- UI is responsive and doesn't freeze
+- Error messages are clear and helpful
+- Works in Chrome/Firefox/Safari
 
-Ready to start? Here's the order:
+### Phase 2 Learning Resources
 
-1. **Phase 2.1** - Build FastAPI backend first (easier to test with curl)
-2. **Phase 2.2** - Build React frontend, connect to backend
-3. **Phase 2.3** - Add document upload
-4. **Phase 2.4** - Polish and improve UX
+**FastAPI:**
+- Official tutorial: https://fastapi.tiangolo.com/tutorial/
+- Focus on: path operations, request/response models, file uploads
 
-Each phase builds on the previous, and you can test incrementally!
+**React:**
+- Official tutorial: https://react.dev/learn
+- Focus on: components, props, state (useState), effects (useEffect)
+
+**Vite:**
+- Quick start: https://vitejs.dev/guide/
+- Just need basics - Vite makes setup easy
+
+### Cost Considerations
+
+**Still 100% Free!**
+- FastAPI: Free and open source
+- React: Free and open source
+- Vite: Free and open source
+- Running locally: No hosting costs
+- Same free Ollama/Llama backend
+
+Only cost is if you use Claude API via the UI (same as CLI).
 
 ---
 
-**Want to begin Phase 2.1 (FastAPI Backend)?** Let me know and I'll give you the prompt for Claude Code!
+## Phase 3: macOS Desktop App (Tauri) ✅ COMPLETE
 
-### Phase 3: macOS Desktop App (Future)
-- [ ] Evaluate frameworks (Electron, Tauri, or native Swift)
+### Overview
+Build a native macOS desktop application using **Tauri** (Rust + WebView). This approach reuses the existing React frontend while providing native macOS integration, small binary size (~10MB vs Electron's ~150MB), and excellent performance.
+
+### Technology Stack
+
+**Recommended: Tauri**
+| Criteria | Tauri | Electron | Swift/SwiftUI |
+|----------|-------|----------|---------------|
+| Binary Size | ~10MB | ~150MB | ~5MB |
+| Memory Usage | Low | High | Lowest |
+| Frontend Reuse | Full React reuse | Full React reuse | Complete rewrite |
+| macOS Integration | Good (via Rust) | Limited | Excellent |
+| Learning Curve | Moderate (Rust basics) | Low | High (new language) |
+| Open Source | Yes (MIT) | Yes (MIT) | Yes |
+| Local-Only | Easy | Easy | Easy |
+
+**Why Tauri:**
+- Reuses existing React frontend (no rewrite needed)
+- Small, efficient binary perfect for distribution
+- Rust backend can directly integrate with Python CLI
+- Active community and excellent documentation
+- Free and open-source
+
+### Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    macOS Desktop App                     │
+├─────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────────────────────────────┐    │
+│  │              Tauri Shell (Rust)                  │    │
+│  │  ┌─────────────────┐  ┌──────────────────────┐  │    │
+│  │  │  Process Mgmt   │  │  macOS Integration   │  │    │
+│  │  │  - Start API    │  │  - Menu Bar          │  │    │
+│  │  │  - Health Check │  │  - Notifications     │  │    │
+│  │  │  - Graceful     │  │  - Dock Badge        │  │    │
+│  │  │    Shutdown     │  │  - File Associations │  │    │
+│  │  └─────────────────┘  └──────────────────────┘  │    │
+│  └─────────────────────────────────────────────────┘    │
+│                          │                               │
+│  ┌─────────────────────────────────────────────────┐    │
+│  │           WebView (React Frontend)               │    │
+│  │  - Existing ChatInterface                        │    │
+│  │  - DocumentUpload, DocumentList                  │    │
+│  │  - SettingsPanel, ThemeToggle                    │    │
+│  │  - All Phase 2 components                        │    │
+│  └─────────────────────────────────────────────────┘    │
+│                          │                               │
+├──────────────────────────┼──────────────────────────────┤
+│  ┌─────────────────────────────────────────────────┐    │
+│  │         Embedded FastAPI Backend                 │    │
+│  │  - /api/query, /api/documents, /api/settings     │    │
+│  │  - Bundled Python + dependencies                 │    │
+│  └─────────────────────────────────────────────────┘    │
+│                          │                               │
+│  ┌─────────────────────────────────────────────────┐    │
+│  │              Local Data Storage                  │    │
+│  │  - ChromaDB (~/Library/Application Support/)    │    │
+│  │  - Settings, Chat History                        │    │
+│  └─────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Project Structure
+
+```
+rag-cli-project/
+├── frontend/                    # Existing React app
+│   ├── src/
+│   ├── src-tauri/              # NEW: Tauri Rust code
+│   │   ├── Cargo.toml
+│   │   ├── tauri.conf.json
+│   │   ├── src/
+│   │   │   ├── main.rs         # Entry point
+│   │   │   ├── backend.rs      # Python process management
+│   │   │   ├── menu.rs         # Native menus
+│   │   │   └── notifications.rs # System notifications
+│   │   └── icons/              # App icons
+│   ├── package.json            # Add Tauri deps
+│   └── vite.config.js          # Tauri-compatible config
+├── backend/                     # Existing FastAPI
+├── src/                         # Existing CLI
+└── desktop/                     # NEW: Desktop-specific docs
+    ├── README.md
+    └── BUILDING.md
+```
+
+### Implementation Phases
+
+#### Phase 3.1: Core App Setup (Foundation) ✅ COMPLETE
+**Objective:** Create basic Tauri app that displays the React frontend
+
+Tasks:
+- [x] Install Tauri CLI and prerequisites (Rust, Tauri CLI)
+- [x] Initialize Tauri in the frontend directory
+- [x] Configure `tauri.conf.json`:
+  - App name: "RAG Assistant"
+  - Bundle identifier: "com.student.rag-assistant"
+  - Window size: 1200x800
+  - macOS minimum version: 10.15
+- [x] Create basic window configuration
+- [x] Build and test basic app shell
+
+**Deliverables:**
+- Working Tauri app that shows React frontend
+- App launches and displays correctly
+- Basic window management works
+
+#### Phase 3.2: Backend Integration ✅ COMPLETE
+**Objective:** Embed and manage the FastAPI backend within the app
+
+Tasks:
+- [x] Create Rust module for Python process management (backend.rs)
+- [x] Implement lifecycle management:
+  - Start backend on app launch
+  - Monitor backend health
+  - Restart on crash
+  - Clean shutdown on app quit
+- [x] Bundle Python environment (start with system Python requirement)
+- [x] Configure API communication (localhost:8000, handle port conflicts)
+- [x] Data directory setup (`~/Library/Application Support/RAG Assistant/`)
+
+**Deliverables:**
+- Backend starts automatically with app
+- Frontend connects to embedded backend
+- All existing features work (query, upload, settings)
+- Graceful shutdown on app close
+
+#### Phase 3.3: macOS-Specific Features ✅ COMPLETE
+**Objective:** Add native macOS integration for polished UX
+
+Tasks:
+- [x] Native Menu Bar (File, Edit, View, Help menus)
+- [x] System Notifications (query complete, document indexed, errors)
+- [x] Dock Integration (custom icon, file associations)
+- [x] File Associations (.txt, .md, .pdf support)
+- [x] Keyboard Shortcuts:
+  - Cmd+N: New chat
+  - Cmd+K: Focus search
+  - Cmd+Shift+E: Export chat
+  - Cmd+Shift+D: Toggle dark mode
+  - Cmd+\: Toggle sidebar
+- [x] Touch Bar Support (optional - deferred to future enhancement)
+
+**Deliverables:**
+- Full native menu bar
+- System notifications working
+- Dock icon with badge support
+- Keyboard shortcuts functional
+
+#### Phase 3.4: Polish & Distribution ✅ COMPLETE
+**Objective:** Prepare for distribution and add finishing touches
+
+Tasks:
+- [x] App Icon (design and generate all sizes)
+- [x] About Window (version, credits, GitHub link, open source licenses)
+- [x] First-Launch Experience (welcome screen with onboarding)
+- [x] Error Handling (friendly messages, recovery, ErrorBoundary)
+- [x] Performance Optimization (LTO, code splitting, reduced bundle size)
+- [x] Build & Distribution:
+  - Create DMG installer (2.9MB)
+  - App bundle (5.4MB)
+  - Code signing (optional - deferred)
+  - Notarization (optional - deferred)
+- [x] Documentation (desktop/README.md, desktop/BUILDING.md)
+
+**Deliverables:**
+- Polished, production-ready app
+- DMG installer for easy distribution
+- Complete documentation
+
+### Phase 3 Learning Resources
+
+**Rust Basics (1-2 hours):**
+- [The Rust Book - Getting Started](https://doc.rust-lang.org/book/ch01-00-getting-started.html)
+- Focus on: ownership, structs, error handling
+
+**Tauri Documentation:**
+- [Tauri Getting Started](https://tauri.app/v1/guides/getting-started/prerequisites)
+- [Tauri with React](https://tauri.app/v1/guides/getting-started/setup/vite)
+
+### Phase 3 Success Criteria ✅ ALL COMPLETE
+
+- [x] App launches and displays React frontend
+- [x] Backend starts automatically
+- [x] All existing features work (query, upload, delete, settings)
+- [x] Native menu bar with keyboard shortcuts
+- [x] System notifications for background events
+- [x] Dark mode persists correctly
+- [x] Clean DMG installer created (2.9MB)
+- [x] App size under 50MB (5.4MB app bundle)
+
+### Risk Mitigation
+
+| Risk | Mitigation |
+|------|------------|
+| Rust learning curve | Start with minimal Rust, expand gradually |
+| Python bundling complexity | Start with system Python requirement |
+| Backend crashes | Implement health checks and auto-restart |
+| Large app size | Use release builds, strip debug symbols |
+
+### Estimated Complexity
+
+- **Phase 3.1:** Straightforward - follow Tauri docs
+- **Phase 3.2:** Moderate - process management requires care
+- **Phase 3.3:** Straightforward - Tauri has good macOS APIs
+- **Phase 3.4:** Straightforward - mostly polish and packaging
+
+---
+
+## Future Enhancements (Phase 4+)
+
+- [ ] Evaluate additional frameworks
 - [ ] Native file system integration
 - [ ] Menu bar app design
 - [ ] Local-first architecture
 - [ ] App bundling and distribution
+- [ ] Persistent chat history - Save conversations to disk/DB
+- [ ] User accounts - Multi-user support
+- [ ] Deployment - Deploy to cloud (Vercel, Railway, etc.)
+- [ ] Real-time updates - WebSocket for streaming responses
+- [ ] Advanced features - Document preview, search, analytics
+- [ ] Mobile app - React Native version
 
-## Configuration
+---
 
-### Environment Variables (.env)
-```
-# LLM Configuration (Ollama is default - FREE and local!)
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=llama3.1:8b
+## Appendix
 
-# Optional: Claude API (only needed if using --llm claude flag)
-# ANTHROPIC_API_KEY=your_key_here
+### Overall Testing Strategy
 
-# Vector Store
-CHROMA_PERSIST_DIR=./data/vector_db
-
-# Embedding Model
-EMBEDDING_MODEL=all-MiniLM-L6-v2
-
-# Chunking Parameters
-CHUNK_SIZE=800
-CHUNK_OVERLAP=100
-
-# Retrieval
-TOP_K_RESULTS=5
-
-# LLM Parameters
-DEFAULT_LLM_PROVIDER=ollama  # Default to free local option
-LLM_TEMPERATURE=0.3
-MAX_TOKENS=2000
-```
-
-## Dependencies (requirements.txt)
-
-```
-# CLI
-click>=8.1.0
-rich>=13.0.0  # Beautiful terminal output
-
-# Document Processing
-pypdf>=3.17.0
-markdown>=3.5.0
-beautifulsoup4>=4.12.0
-lxml>=4.9.0
-
-# Embeddings & Vector Store
-sentence-transformers>=2.2.0
-chromadb>=0.4.0
-numpy>=1.24.0
-
-# LLM Integration
-ollama>=0.13.0  # FREE local LLM (default) - you already have v0.13.0 installed!
-# anthropic>=0.18.0  # Optional: uncomment if using --llm claude flag
-
-# Utilities
-python-dotenv>=1.0.0
-pydantic>=2.0.0  # Configuration validation
-tqdm>=4.66.0  # Progress bars
-
-# Development
-pytest>=7.4.0
-black>=23.0.0
-ruff>=0.1.0
-```
-
-## Testing Strategy
-
-### Unit Tests
+#### Unit Tests
 - Document loader for each file type
 - Chunking algorithm correctness
 - Embedding generation
 - Vector store CRUD operations
 
-### Integration Tests
+#### Integration Tests
 - End-to-end document indexing
 - Query and retrieval accuracy
 - LLM response generation
 
-### Manual Testing Checklist
-- [ ] Add single PDF document
-- [ ] Add multiple documents in batch
-- [ ] Query with expected answer in docs
-- [ ] Query with answer NOT in docs (should say so)
-- [ ] Handle corrupted/invalid files gracefully
-- [ ] Test with large documents (>100 pages)
-- [ ] Test with various document formats
+### Overall Learning Resources
 
-## Cost Considerations (Student-Friendly!)
-
-### 100% Free Option (Recommended for Learning)
-**Total Cost: $0**
-- ✅ Local embeddings (sentence-transformers): FREE
-- ✅ Local vector store (ChromaDB): FREE  
-- ✅ Local LLM (Ollama/Llama): FREE
-- ✅ All data stays on your Mac
-- ✅ Works offline
-
-This setup is completely free and perfect for learning. You won't have any API costs.
-
-### Optional Paid Upgrade
-**When you might want Claude API:**
-- Need highest quality answers for important work
-- Comparing your RAG system's performance
-- Presentations or demonstrations
-
-**Cost if using Claude:**
-- Claude Sonnet 4: ~$3 per million input tokens, ~$15 per million output tokens
-- Estimated usage for learning: $5-20 total (can set spending limits in Anthropic console)
-- You can add your API key later without changing any code!
-
-### Command Line Examples
-```bash
-# Your default (FREE!)
-rag-cli query "What is X?"  # Uses Llama via Ollama
-
-# When you want premium quality (PAID)
-rag-cli query "What is X?" --llm claude  # Uses Claude API
-```
-
-## Success Criteria
-
-### Minimum Viable Product (MVP)
-- ✅ Successfully parse PDF, MD, and HTML files
-- ✅ Create and persist vector embeddings
-- ✅ Retrieve relevant context for queries
-- ✅ Generate accurate answers using LLM
-- ✅ Handle errors gracefully with helpful messages
-- ✅ Complete documentation and usage examples
-
-### Quality Metrics
-- **Retrieval Accuracy**: >80% of relevant chunks retrieved in top-5
-- **Response Quality**: Answers are factual and cite source chunks
-- **Performance**: Process 100-page PDF in <30 seconds
-- **UX**: Clear CLI output with progress indicators
-
-## Learning Resources
-
-### RAG Concepts
+#### RAG Concepts
 - Embeddings and vector similarity
 - Semantic search vs keyword search
 - Context window management
 - Prompt engineering for RAG
 
-### Python Libraries
+#### Python Libraries
 - Click/Typer documentation
 - sentence-transformers examples
 - ChromaDB tutorials
 - Anthropic API docs
 
-### Future Topics (Web UI)
+#### Future Topics (Web UI)
 - FastAPI framework
 - React basics
 - REST API design
 - Frontend-backend communication
 
-### Future Topics (Desktop App)
+#### Future Topics (Desktop App)
 - macOS app development
 - Native UI frameworks
 - App signing and distribution
 
-## Risk Mitigation
+### Overall Risk Mitigation
 
-### Technical Risks
+#### Technical Risks
 1. **M3 Compatibility**: Ensure all libraries have ARM builds
    - Mitigation: Test installation early, use pre-built wheels
    - Note: All major libraries (ChromaDB, sentence-transformers) have ARM support
-   
+
 2. **Large Document Processing**: Memory constraints with 16GB
    - Mitigation: Stream processing, batch embeddings
-   
+
 3. **Llama Performance**: Slower than cloud APIs (5-15 tokens/sec)
    - Mitigation: Show progress indicators, maybe add streaming output
    - Optional: Use Claude API flag for faster responses when needed
-   
+
 4. **Vector DB Performance**: Slow searches with large datasets
    - Mitigation: Start small, optimize later, consider indices
 
-### User Experience Risks
+#### User Experience Risks
 1. **Complex Setup**: Too many dependencies
    - Mitigation: Clear installation guide, automated setup script
-   
+
 2. **Unclear Error Messages**: User doesn't know what went wrong
    - Mitigation: Comprehensive error handling with suggestions
 
-## Prerequisites & Setup
+---
 
-### What You Already Have ✅
-- ✅ Python 3.13 installed (downgraded from 3.14 for ChromaDB compatibility)
-- ✅ Ollama 0.13.0 installed
-- ✅ macOS with M3 chip
-
-### What You Need to Install
-**Nothing else!** All dependencies will be installed via pip when you set up the project:
-- ChromaDB - installed via `pip install chromadb` (no separate installation needed)
-- sentence-transformers - installed via pip
-- All other Python libraries - installed via pip
-
-ChromaDB is just a Python library, not a separate database server. It runs entirely within your Python application and stores data as files on disk.
-
-### First-Time Model Downloads (Automatic)
-When you first run the RAG system, these will download automatically:
-1. **Embedding model** (~80MB): `all-MiniLM-L6-v2` downloads on first use
-2. **Llama model** (if not already pulled): Run `ollama pull llama3.1:8b` (about 4.7GB)
-
-You can pre-download the Llama model now to save time later:
-```bash
-ollama pull llama3.1:8b
-```
-
-## Next Steps
+## Next Steps (for New Users)
 
 1. **Verify your setup**
    ```bash
@@ -890,6 +1097,8 @@ ollama pull llama3.1:8b
    - Add logging infrastructure
 
 7. **Iterate incrementally**: Build one component at a time, test thoroughly
+
+---
 
 ## Questions to Resolve
 
