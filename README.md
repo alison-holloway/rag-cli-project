@@ -2,6 +2,23 @@
 
 A Retrieval-Augmented Generation (RAG) system for querying your documents using local LLMs. Available as a CLI, REST API, Web UI, or native macOS Desktop App.
 
+## Table of Contents
+
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [Commands](#commands) - CLI reference
+- [Configuration](#configuration)
+- [Architecture](#architecture)
+- [Examples](#examples)
+- [Python API](#python-api)
+- [Web API](#web-api) - REST API reference
+- [Web UI](#web-ui) - Browser-based interface
+- [macOS Desktop App](#macos-desktop-app) - Native desktop application
+- [Development](#development)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+
 ## Features
 
 - **Document Processing**: Load PDF, Markdown, and HTML files
