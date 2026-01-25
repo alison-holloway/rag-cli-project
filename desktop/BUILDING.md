@@ -17,7 +17,7 @@ This guide covers how to build the RAG Assistant desktop application from source
    ```bash
    # Using Homebrew
    brew install node
-   
+
    # Or using nvm
    nvm install 18
    ```
@@ -25,6 +25,18 @@ This guide covers how to build the RAG Assistant desktop application from source
 3. **Tauri CLI**:
    ```bash
    cargo install tauri-cli
+   ```
+
+4. **Python 3.13** (for the backend - Python 3.14 is not yet supported by ChromaDB):
+   ```bash
+   # Install with Homebrew
+   brew install python@3.13
+
+   # Set up virtual environment at project root
+   cd /path/to/rag-cli-project
+   python3.13 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
    ```
 
 ### macOS-Specific Requirements
@@ -214,6 +226,23 @@ Or add to your shell profile:
 ```bash
 export PATH="$HOME/.cargo/bin:$PATH"
 ```
+
+### Python Version Issues
+
+The desktop app requires Python 3.13 for ChromaDB compatibility. If you have Python 3.14:
+
+```bash
+# Check what Python version the venv uses
+./venv/bin/python --version
+
+# If it's not 3.13, recreate the venv
+rm -rf venv
+python3.13 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+**Note**: The Tauri app looks for the venv at the project root (`rag-cli-project/venv/`). The backend will fail to start if this venv doesn't exist or uses an incompatible Python version.
 
 ## Build Sizes
 

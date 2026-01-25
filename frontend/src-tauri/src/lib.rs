@@ -30,6 +30,25 @@ pub fn run() {
         .setup(|app| {
             info!("Setting up RAG Assistant...");
 
+            // Check webview window
+            if let Some(window) = app.get_webview_window("main") {
+                info!("Found main webview window");
+                if let Ok(url) = window.url() {
+                    info!("Current webview URL: {}", url);
+                }
+                // Only open devtools in debug builds
+                #[cfg(debug_assertions)]
+                {
+                    window.open_devtools();
+                    info!("DevTools opened (debug build)");
+                }
+            } else {
+                error!("Could not find main webview window!");
+                for (label, _) in app.webview_windows() {
+                    info!("Found window with label: {}", label);
+                }
+            }
+
             // Build and set the application menu
             let handle = app.handle();
             match menu::build_menu(handle) {

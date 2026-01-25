@@ -23,6 +23,12 @@ function AppContent() {
   const { toggleTheme } = useTheme();
   const chatInterfaceRef = useRef(null);
 
+  // Define addNotification first since other callbacks depend on it
+  const addNotification = useCallback((notification) => {
+    const id = Date.now().toString();
+    setNotifications((prev) => [...prev, { ...notification, id }]);
+  }, []);
+
   const handleRestartBackend = useCallback(async () => {
     if (!window.__TAURI__) return;
 
@@ -47,11 +53,6 @@ function AppContent() {
       });
     }
   }, [addNotification]);
-
-  const addNotification = useCallback((notification) => {
-    const id = Date.now().toString();
-    setNotifications((prev) => [...prev, { ...notification, id }]);
-  }, []);
 
   const removeNotification = useCallback((id) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));

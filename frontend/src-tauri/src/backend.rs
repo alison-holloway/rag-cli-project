@@ -1,7 +1,9 @@
 use log::{error, info, warn};
+use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
 use std::process::{Child, Command, Stdio};
 use std::sync::Mutex;
+use std::thread;
 use std::time::Duration;
 use tokio::time::sleep;
 
@@ -133,8 +135,42 @@ pub fn spawn_backend(state: &Backend) -> Result<u16, String> {
 
     info!("Python path: {:?}", python_path);
 
+    // Verify Python executable exists and is correct version
+    if !python_path.exists() {
+        return Err(format!("Python executable not found at {:?}", python_path));
+    }
+
+    // Check Python version
+    let version_output = Command::new(&python_path)
+        .args(["--version"])
+        .output()
+        .map_err(|e| format!("Failed to get Python version: {}", e))?;
+
+    let version_str = String::from_utf8_lossy(&version_output.stdout);
+    info!("Python version: {}", version_str.trim());
+
+    if version_output.stderr.len() > 0 {
+        let stderr_str = String::from_utf8_lossy(&version_output.stderr);
+        info!("Python version stderr: {}", stderr_str.trim());
+    }
+
+    // Test that we can import the backend module
+    info!("Testing backend module import...");
+    let test_import = Command::new(&python_path)
+        .args(["-c", "import backend.main; print('Backend module OK')"])
+        .current_dir(&project_dir)
+        .output()
+        .map_err(|e| format!("Failed to test backend import: {}", e))?;
+
+    if !test_import.status.success() {
+        let stderr = String::from_utf8_lossy(&test_import.stderr);
+        error!("Backend module import failed: {}", stderr);
+        return Err(format!("Backend module import failed: {}", stderr));
+    }
+    info!("Backend module import successful");
+
     // Start uvicorn
-    let child = Command::new(&python_path)
+    let mut child = Command::new(&python_path)
         .args([
             "-m", "uvicorn",
             "backend.main:app",
@@ -148,6 +184,35 @@ pub fn spawn_backend(state: &Backend) -> Result<u16, String> {
         .map_err(|e| format!("Failed to start backend: {}", e))?;
 
     info!("Backend process started with PID: {:?}", child.id());
+
+    // Spawn threads to capture and log stdout/stderr
+    if let Some(stdout) = child.stdout.take() {
+        thread::spawn(move || {
+            let reader = BufReader::new(stdout);
+            for line in reader.lines() {
+                if let Ok(line) = line {
+                    info!("[Backend stdout] {}", line);
+                }
+            }
+        });
+    }
+
+    if let Some(stderr) = child.stderr.take() {
+        thread::spawn(move || {
+            let reader = BufReader::new(stderr);
+            for line in reader.lines() {
+                if let Ok(line) = line {
+                    // Uvicorn logs to stderr, so use warn for actual errors
+                    if line.contains("ERROR") || line.contains("Traceback") || line.contains("Exception") {
+                        error!("[Backend stderr] {}", line);
+                    } else {
+                        info!("[Backend stderr] {}", line);
+                    }
+                }
+            }
+        });
+    }
+
     backend.process = Some(child);
 
     Ok(port)
@@ -155,11 +220,22 @@ pub fn spawn_backend(state: &Backend) -> Result<u16, String> {
 
 /// Check if the backend is healthy
 pub async fn check_health(port: u16) -> bool {
-    let url = format!("http://127.0.0.1:{}/health", port);
+    let url = format!("http://127.0.0.1:{}/api/health", port);
 
     match reqwest::get(&url).await {
-        Ok(response) => response.status().is_success(),
-        Err(_) => false,
+        Ok(response) => {
+            let success = response.status().is_success();
+            if success {
+                info!("Health check succeeded: {}", url);
+            } else {
+                warn!("Health check failed with status: {}", response.status());
+            }
+            success
+        },
+        Err(e) => {
+            warn!("Health check error: {}", e);
+            false
+        }
     }
 }
 

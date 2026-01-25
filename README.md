@@ -19,7 +19,7 @@ A Retrieval-Augmented Generation (RAG) system for querying your documents using 
 
 ### Prerequisites
 
-- Python 3.10+
+- Python 3.13 (required for ChromaDB compatibility; Python 3.14 is not yet supported)
 - [Ollama](https://ollama.ai) installed (the CLI will start it automatically)
 
 ### Installation
@@ -744,14 +744,21 @@ RAG Assistant is also available as a native macOS desktop application, built wit
 2. Open the DMG and drag RAG Assistant to Applications
 3. On first launch, right-click and select "Open" (required for unsigned apps)
 
-**Prerequisites**: Python 3.9+ and [Ollama](https://ollama.ai) must be installed.
+**Prerequisites**: Python 3.13 (in a virtual environment), [Ollama](https://ollama.ai), and the project dependencies must be installed.
 
 ### Quick Start
 
-1. Ensure Ollama is running (`ollama serve`)
-2. Double-click RAG Assistant in Applications
-3. Upload documents via the sidebar
-4. Start asking questions!
+1. Set up the project with Python 3.13:
+   ```bash
+   cd /path/to/rag-cli-project
+   python3.13 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+2. Ensure Ollama is running (`ollama serve`)
+3. Double-click RAG Assistant in Applications
+4. Upload documents via the sidebar
+5. Start asking questions!
 
 ### Documentation
 

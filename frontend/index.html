@@ -4,10 +4,31 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RAG CLI</title>
+    <title>RAG Assistant</title>
+    <script>
+      // Global error handler to catch any JS errors
+      window.onerror = function(msg, url, line, col, error) {
+        document.body.innerHTML = '<div style="padding: 20px; font-family: monospace; background: #fee; color: #900;">' +
+          '<h1>JavaScript Error</h1>' +
+          '<p><strong>Message:</strong> ' + msg + '</p>' +
+          '<p><strong>URL:</strong> ' + url + '</p>' +
+          '<p><strong>Line:</strong> ' + line + '</p>' +
+          '<pre>' + (error ? error.stack : 'No stack') + '</pre>' +
+          '</div>';
+        return false;
+      };
+      window.addEventListener('unhandledrejection', function(event) {
+        document.body.innerHTML = '<div style="padding: 20px; font-family: monospace; background: #fee; color: #900;">' +
+          '<h1>Unhandled Promise Rejection</h1>' +
+          '<p>' + event.reason + '</p>' +
+          '</div>';
+      });
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div style="padding: 20px; text-align: center;">Loading...</div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

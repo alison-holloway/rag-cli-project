@@ -14,7 +14,7 @@ A native macOS desktop application for the RAG Assistant, providing local docume
 
 - macOS 10.15 (Catalina) or later
 - Apple Silicon (M1/M2/M3) or Intel processor
-- Python 3.9+ (for backend)
+- Python 3.13 (required for ChromaDB compatibility; Python 3.14 is not yet supported)
 - Ollama installed and running
 
 ## Installation
@@ -30,9 +30,13 @@ A native macOS desktop application for the RAG Assistant, providing local docume
 
 Before running the app, ensure you have:
 
-1. **Python 3.9+** installed:
+1. **Python 3.13** installed (Python 3.14 is not yet supported by ChromaDB):
    ```bash
-   python3 --version
+   # Check version
+   python3.13 --version
+
+   # Install with Homebrew if needed
+   brew install python@3.13
    ```
 
 2. **Ollama** installed and running:
@@ -47,11 +51,19 @@ Before running the app, ensure you have:
    ollama pull llama3.2
    ```
 
-3. **Backend dependencies** installed:
+3. **Virtual environment with dependencies** set up:
    ```bash
    cd /path/to/rag-cli-project
+
+   # Create venv with Python 3.13
+   python3.13 -m venv venv
+   source venv/bin/activate
+
+   # Install dependencies
    pip install -r requirements.txt
    ```
+
+   **Important**: The desktop app looks for the virtual environment at the project root (`venv/` directory). Ensure this exists before launching the app.
 
 ## Usage
 
@@ -95,10 +107,42 @@ On first launch, you'll see a welcome screen that introduces the app's features.
 
 If you see a backend connection error:
 
-1. Ensure Python 3.9+ is installed
-2. Make sure Ollama is running (`ollama serve`)
-3. Check that the backend dependencies are installed
-4. Click "Restart Backend" to retry
+1. **Check Python version**: Must be Python 3.13 (not 3.14)
+   ```bash
+   # Check what version is in the venv
+   ./venv/bin/python --version
+   ```
+
+2. **Ensure virtual environment exists** at the project root:
+   ```bash
+   ls -la /path/to/rag-cli-project/venv/
+   ```
+
+3. **Verify dependencies are installed**:
+   ```bash
+   source venv/bin/activate
+   pip list | grep chromadb
+   ```
+
+4. Make sure Ollama is running (`ollama serve`)
+
+5. Click "Restart Backend" in the app to retry
+
+### Python Version Issues
+
+ChromaDB requires Python 3.13 or earlier. If you have Python 3.14 as your system default:
+
+```bash
+# Install Python 3.13
+brew install python@3.13
+
+# Recreate the virtual environment
+cd /path/to/rag-cli-project
+rm -rf venv
+python3.13 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
 ### Gatekeeper Warning
 

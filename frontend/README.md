@@ -1,16 +1,109 @@
-# React + Vite
+# RAG Assistant Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This directory contains the React-based web UI and Tauri desktop app for the RAG Assistant.
 
-Currently, two official plugins are available:
+## Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```
+frontend/
+├── src/                    # React source code
+│   ├── App.jsx             # Main application component
+│   ├── components/         # UI components
+│   │   ├── ChatInterface.jsx    # Main chat container
+│   │   ├── MessageList.jsx      # Message display with markdown/code
+│   │   ├── MessageInput.jsx     # Input field with send button
+│   │   ├── SettingsPanel.jsx    # LLM and query settings
+│   │   ├── Sidebar.jsx          # Document management
+│   │   ├── DocumentList.jsx     # Indexed documents list
+│   │   ├── DocumentUpload.jsx   # Drag-and-drop upload
+│   │   └── Notification.jsx     # Toast notifications
+│   ├── context/            # React context providers
+│   │   └── ThemeContext.jsx     # Dark mode state
+│   └── services/
+│       └── api.js          # Backend API client
+├── src-tauri/              # Tauri/Rust desktop app
+│   ├── Cargo.toml          # Rust dependencies
+│   ├── tauri.conf.json     # App configuration
+│   ├── src/                # Rust source
+│   │   ├── lib.rs          # Entry point
+│   │   ├── backend.rs      # Python backend management
+│   │   ├── commands.rs     # Tauri IPC commands
+│   │   ├── menu.rs         # Native menu bar
+│   │   └── notifications.rs
+│   └── icons/              # App icons
+├── package.json            # Node.js dependencies
+├── vite.config.js          # Vite configuration
+└── index.html              # HTML entry point
+```
 
-## React Compiler
+## Development
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Web UI Development
 
-## Expanding the ESLint configuration
+Start the development server:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+npm run dev
+```
+
+The web UI will be available at http://localhost:5173.
+
+**Note**: The FastAPI backend must also be running on port 8000. Use `../start-web.sh` from the project root to start both services.
+
+### Desktop App Development
+
+For Tauri desktop development with hot-reload:
+
+```bash
+npm install
+npm run tauri dev
+```
+
+**Prerequisites**:
+- Rust and Cargo installed
+- Tauri CLI (`cargo install tauri-cli`)
+- Python 3.13 virtual environment at project root
+
+## Building
+
+### Production Web Build
+
+```bash
+npm run build
+```
+
+Output goes to `dist/` directory.
+
+### Production Desktop Build
+
+```bash
+npm run tauri build
+```
+
+Output:
+- App bundle: `src-tauri/target/release/bundle/macos/RAG Assistant.app`
+- DMG installer: `src-tauri/target/release/bundle/dmg/RAG Assistant_x.x.x_aarch64.dmg`
+
+## Configuration
+
+### Vite Configuration
+
+The `vite.config.js` is configured to:
+- Use relative paths for production builds (required for Tauri)
+- Use absolute paths for development (required for Vite dev server)
+- Chunk vendor dependencies for efficient caching
+
+### Tauri Configuration
+
+The `src-tauri/tauri.conf.json` configures:
+- App metadata (name, version, identifier)
+- Window settings (size, resizable, title bar)
+- File associations (.txt, .md, .pdf)
+- Security permissions
+
+## See Also
+
+- [Main README](../README.md) - Full project documentation
+- [Desktop README](../desktop/README.md) - Desktop app user guide
+- [Building Guide](../desktop/BUILDING.md) - Detailed build instructions
