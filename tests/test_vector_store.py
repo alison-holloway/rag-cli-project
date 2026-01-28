@@ -1,5 +1,6 @@
 """Tests for vector store module."""
 
+import gc
 import tempfile
 from pathlib import Path
 
@@ -11,20 +12,33 @@ from src.vector_store import SearchResult, VectorStore, reset_vector_store
 
 @pytest.fixture
 def temp_dir():
-    """Create a temporary directory for tests."""
+    """Create a temporary directory for tests.
+
+    Yields the path and ensures cleanup happens after ChromaDB is closed.
+    """
     with tempfile.TemporaryDirectory() as tmpdir:
         yield Path(tmpdir)
+    # Force garbage collection to ensure file handles are released
+    gc.collect()
 
 
 @pytest.fixture
 def vector_store(temp_dir: Path) -> VectorStore:
-    """Create a vector store with temporary storage."""
+    """Create a vector store with temporary storage.
+
+    Properly cleans up ChromaDB connections after each test.
+    """
     # Reset the global singleton to avoid interference
     reset_vector_store()
-    return VectorStore(
+    store = VectorStore(
         persist_directory=temp_dir / "chroma",
         collection_name="test_collection",
     )
+    yield store
+    # Cleanup: reset (clear data and close) ChromaDB before temp_dir cleanup
+    store.reset()
+    reset_vector_store()
+    gc.collect()
 
 
 @pytest.fixture
@@ -98,8 +112,9 @@ class TestVectorStore:
     def test_init_creates_directory(self, temp_dir: Path) -> None:
         """Test that init creates the persist directory."""
         store_path = temp_dir / "new_store" / "chroma"
-        VectorStore(persist_directory=store_path)
+        store = VectorStore(persist_directory=store_path)
         assert store_path.exists()
+        store.reset()  # Full cleanup since we don't need the data
 
     def test_init_creates_collection(self, vector_store: VectorStore) -> None:
         """Test that init creates a collection."""
@@ -300,6 +315,9 @@ class TestVectorStore:
         )
         store1.add_chunks(sample_chunks)
         count1 = store1.count()
+        # Close first store (release resources, keep data)
+        store1.close()
+        gc.collect()  # Ensure file handles are released
 
         # Create new store instance with same path
         store2 = VectorStore(
@@ -309,6 +327,7 @@ class TestVectorStore:
 
         # Data should still be there
         assert store2.count() == count1
+        store2.reset()  # Full cleanup
 
     def test_search_results_sorted_by_similarity(
         self, vector_store: VectorStore, sample_chunks: list[Chunk]

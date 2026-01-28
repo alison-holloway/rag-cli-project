@@ -460,6 +460,43 @@ class VectorStore:
                 sanitized[key] = str(value)
         return sanitized
 
+    def close(self) -> None:
+        """Close the vector store and release resources.
+
+        Clears internal references to allow garbage collection to release
+        file handles. Data is already persisted to disk by ChromaDB.
+        Should be called when done using the store, especially in tests.
+        """
+        try:
+            if hasattr(self, "_collection"):
+                self._collection = None
+            if hasattr(self, "_client") and self._client is not None:
+                # Clear the client reference; ChromaDB persists data automatically
+                self._client = None
+                logger.debug("ChromaDB client released")
+        except Exception as e:
+            logger.warning(f"Error closing vector store: {e}")
+
+    def reset(self) -> None:
+        """Reset the vector store, clearing all data.
+
+        This completely wipes the database. Use close() if you just want
+        to release resources without losing data.
+        """
+        try:
+            if hasattr(self, "_client") and self._client is not None:
+                self._client.reset()
+                self._client = None
+                self._collection = None
+                logger.debug("ChromaDB client reset and data cleared")
+        except Exception as e:
+            logger.warning(f"Error resetting vector store: {e}")
+
+    @property
+    def client(self) -> chromadb.ClientAPI:
+        """Get the ChromaDB client."""
+        return self._client
+
 
 # Module-level singleton
 _vector_store: VectorStore | None = None
@@ -478,6 +515,11 @@ def get_vector_store() -> VectorStore:
 
 
 def reset_vector_store() -> None:
-    """Reset the global vector store instance."""
+    """Reset the global vector store instance.
+
+    Resets (clears data) the existing store if one exists, then resets the singleton.
+    """
     global _vector_store
+    if _vector_store is not None:
+        _vector_store.reset()
     _vector_store = None

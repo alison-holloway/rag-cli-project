@@ -790,9 +790,17 @@ RAG Assistant is also available as a native macOS desktop application, built wit
 # Run all tests
 pytest tests/ -v
 
-# Run with coverage
+# Run with coverage (terminal report)
+pytest tests/ --cov=src --cov-report=term
+
+# Run with coverage (HTML report)
 pytest tests/ --cov=src --cov-report=html
+
+# View the HTML coverage report
+open htmlcov/index.html
 ```
+
+**Note:** Coverage reporting requires `pytest-cov`, which is included in `requirements.txt`.
 
 ### Linting
 
