@@ -1,6 +1,5 @@
 """Tests for configuration module."""
 
-
 from src.config import (
     Settings,
     get_settings,

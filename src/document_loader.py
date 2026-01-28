@@ -233,9 +233,7 @@ class MarkdownLoader(BaseLoader):
             extra={"raw_markdown_length": len(raw_content)},
         )
 
-        logger.info(
-            f"Loaded Markdown: {file_path.name} ({metadata.word_count} words)"
-        )
+        logger.info(f"Loaded Markdown: {file_path.name} ({metadata.word_count} words)")
 
         return Document(content=plain_text, metadata=metadata)
 
@@ -430,6 +428,5 @@ class DocumentLoader:
                 error_count += 1
 
         logger.info(
-            f"Loaded {loaded_count} documents from {dir_path} "
-            f"({error_count} errors)"
+            f"Loaded {loaded_count} documents from {dir_path} ({error_count} errors)"
         )

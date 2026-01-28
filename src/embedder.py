@@ -86,9 +86,7 @@ class Embedder:
         # Filter out empty texts
         valid_texts = [t for t in texts if t and t.strip()]
         if len(valid_texts) != len(texts):
-            logger.warning(
-                f"Filtered out {len(texts) - len(valid_texts)} empty texts"
-            )
+            logger.warning(f"Filtered out {len(texts) - len(valid_texts)} empty texts")
 
         if not valid_texts:
             return np.array([])

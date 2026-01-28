@@ -1,6 +1,5 @@
 """Tests for the exceptions module."""
 
-
 from src.exceptions import (
     ChunkNotFoundError,
     ConfigError,

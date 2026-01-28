@@ -257,9 +257,7 @@ Machine learning is used in:
         assert result.template_used == "no_context"
         assert result.has_context is False
 
-    def test_streaming_query(
-        self, sample_documents, temp_dir, vector_store
-    ):
+    def test_streaming_query(self, sample_documents, temp_dir, vector_store):
         """Test streaming query functionality."""
         loader = DocumentLoader()
         chunker = TextChunker(chunk_size=500, chunk_overlap=50)

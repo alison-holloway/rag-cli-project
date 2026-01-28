@@ -274,9 +274,7 @@ class TestVectorStore:
         docs = vector_store.list_documents()
         assert docs == []
 
-    def test_clear(
-        self, vector_store: VectorStore, sample_chunks: list[Chunk]
-    ) -> None:
+    def test_clear(self, vector_store: VectorStore, sample_chunks: list[Chunk]) -> None:
         """Test clearing the store."""
         vector_store.add_chunks(sample_chunks)
         assert vector_store.count() > 0

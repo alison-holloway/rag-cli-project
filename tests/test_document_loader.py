@@ -376,9 +376,7 @@ class TestDocumentLoader:
         assert "markdown" in file_types
         assert "html" in file_types
 
-    def test_load_directory_nonexistent_raises(
-        self, loader: DocumentLoader
-    ) -> None:
+    def test_load_directory_nonexistent_raises(self, loader: DocumentLoader) -> None:
         """Test that loading from non-existent directory raises error."""
         with pytest.raises(FileNotFoundError):
             list(loader.load_directory(Path("nonexistent_dir")))

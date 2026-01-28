@@ -112,7 +112,7 @@ class TestDocumentProcessingProgress:
         progress = DocumentProcessingProgress()
         progress.start(total_files=5)
         for i in range(5):
-            progress.update(f"File {i+1}")
+            progress.update(f"File {i + 1}")
             progress.advance()
         progress.finish()
 

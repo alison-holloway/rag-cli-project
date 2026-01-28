@@ -146,11 +146,13 @@ class TestOllamaClient:
 
     def test_ollama_generate_stream(self, mock_ollama_client):
         """Test streaming generation."""
-        mock_ollama_client.chat.return_value = iter([
-            {"message": {"content": "Hello"}},
-            {"message": {"content": " world"}},
-            {"message": {"content": "!"}},
-        ])
+        mock_ollama_client.chat.return_value = iter(
+            [
+                {"message": {"content": "Hello"}},
+                {"message": {"content": " world"}},
+                {"message": {"content": "!"}},
+            ]
+        )
 
         client = OllamaClient()
         chunks = list(client.generate_stream("Test prompt"))

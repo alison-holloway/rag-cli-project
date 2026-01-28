@@ -180,8 +180,7 @@ class TextChunker:
         chunks = self.chunk_text(document.content, metadata=doc_metadata)
 
         logger.info(
-            f"Chunked document '{document.metadata.filename}' "
-            f"into {len(chunks)} chunks"
+            f"Chunked document '{document.metadata.filename}' into {len(chunks)} chunks"
         )
 
         return chunks

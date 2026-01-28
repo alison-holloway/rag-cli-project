@@ -159,7 +159,8 @@ def _setup_ollama(model: str = "llama3.1:8b") -> bool:
 @click.group()
 @click.version_option(version=__version__, prog_name="rag-cli")
 @click.option(
-    "--verbose", "-v",
+    "--verbose",
+    "-v",
     is_flag=True,
     help="Show detailed output (INFO logs)",
 )
@@ -263,12 +264,14 @@ def init(ctx: click.Context, project_name: str, skip_ollama: bool) -> None:
 @cli.command()
 @click.argument("path", type=click.Path(exists=True))
 @click.option(
-    "--recursive", "-r",
+    "--recursive",
+    "-r",
     is_flag=True,
     help="Recursively process directories",
 )
 @click.option(
-    "--force", "-f",
+    "--force",
+    "-f",
     is_flag=True,
     help="Re-index documents even if already indexed",
 )
@@ -375,6 +378,7 @@ def add(ctx: click.Context, path: str, recursive: bool, force: bool) -> None:
                 print_error(f"Failed to process {file_path.name}: {e}")
                 if debug:
                     import traceback
+
                     console.print(f"[dim]{traceback.format_exc()}[/dim]")
                 failed_files += 1
 
@@ -398,24 +402,28 @@ def add(ctx: click.Context, path: str, recursive: bool, force: bool) -> None:
 @cli.command()
 @click.argument("question")
 @click.option(
-    "--llm", "-l",
+    "--llm",
+    "-l",
     type=click.Choice(["ollama", "claude"]),
     default="ollama",
     help="LLM provider to use (default: ollama - free and local)",
 )
 @click.option(
-    "-k", "--top-k",
+    "-k",
+    "--top-k",
     default=5,
     help="Number of relevant chunks to retrieve",
 )
 @click.option(
-    "--temperature", "-t",
+    "--temperature",
+    "-t",
     default=None,
     type=float,
     help="LLM temperature (0.0-1.0)",
 )
 @click.option(
-    "--show-sources", "-s",
+    "--show-sources",
+    "-s",
     is_flag=True,
     help="Show source documents used",
 )
@@ -496,18 +504,21 @@ def query(
         print_error(f"Query failed: {e}")
         if debug:
             import traceback
+
             console.print(f"[dim]{traceback.format_exc()}[/dim]")
 
 
 @cli.command()
 @click.option(
-    "--llm", "-l",
+    "--llm",
+    "-l",
     type=click.Choice(["ollama", "claude"]),
     default="ollama",
     help="LLM provider to use (default: ollama - free and local)",
 )
 @click.option(
-    "--stream", "-s",
+    "--stream",
+    "-s",
     is_flag=True,
     help="Stream responses as they are generated",
 )

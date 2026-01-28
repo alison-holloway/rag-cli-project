@@ -251,8 +251,7 @@ class OllamaClient(BaseLLMClient):
 
             if not available:
                 logger.warning(
-                    f"Model '{self.model}' not found. "
-                    f"Available: {model_names}"
+                    f"Model '{self.model}' not found. Available: {model_names}"
                 )
 
             return available
@@ -388,8 +387,7 @@ class ClaudeClient(BaseLLMClient):
                 provider="claude",
                 prompt_tokens=response.usage.input_tokens,
                 completion_tokens=response.usage.output_tokens,
-                total_tokens=response.usage.input_tokens
-                + response.usage.output_tokens,
+                total_tokens=response.usage.input_tokens + response.usage.output_tokens,
             )
 
         except Exception as e:

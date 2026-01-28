@@ -106,14 +106,16 @@ class RAGService:
         sources = []
         if result.retrieval and result.retrieval.chunks:
             for chunk in result.retrieval.chunks:
-                sources.append({
-                    "file": chunk.metadata.get("source_file", "unknown"),
-                    "chunk_id": chunk.chunk_id,
-                    "content": chunk.content[:200] + "..."
-                    if len(chunk.content) > 200
-                    else chunk.content,
-                    "similarity": chunk.similarity or 0.0,
-                })
+                sources.append(
+                    {
+                        "file": chunk.metadata.get("source_file", "unknown"),
+                        "chunk_id": chunk.chunk_id,
+                        "content": chunk.content[:200] + "..."
+                        if len(chunk.content) > 200
+                        else chunk.content,
+                        "similarity": chunk.similarity or 0.0,
+                    }
+                )
 
         return {
             "answer": result.answer,
@@ -149,8 +151,7 @@ class RAGService:
 
         if filename in doc_names and not force:
             raise ValueError(
-                f"Document '{filename}' is already indexed. "
-                "Use force=true to re-index."
+                f"Document '{filename}' is already indexed. Use force=true to re-index."
             )
 
         # Save file temporarily
@@ -207,13 +208,15 @@ class RAGService:
 
         doc_list = []
         for doc in documents:
-            doc_list.append({
-                "id": doc.get("source_file", "unknown"),
-                "filename": doc.get("source_file", "unknown"),
-                "file_type": doc.get("file_type", "unknown"),
-                "chunk_count": doc.get("chunk_count", 0),
-                "indexed_at": None,  # Could add timestamp tracking later
-            })
+            doc_list.append(
+                {
+                    "id": doc.get("source_file", "unknown"),
+                    "filename": doc.get("source_file", "unknown"),
+                    "file_type": doc.get("file_type", "unknown"),
+                    "chunk_count": doc.get("chunk_count", 0),
+                    "indexed_at": None,  # Could add timestamp tracking later
+                }
+            )
 
         return {
             "documents": doc_list,
