@@ -92,6 +92,13 @@ The build outputs:
 - **App bundle**: `src-tauri/target/release/bundle/macos/RAG Assistant.app`
 - **DMG installer**: `src-tauri/target/release/bundle/dmg/RAG Assistant_x.x.x_aarch64.dmg`
 
+**Important**: The built app requires the backend to be started separately. Before launching the app:
+```bash
+cd /path/to/rag-cli-project
+./start-web.sh
+```
+The app will connect to the backend on port 8000. This allows sharing data between the desktop app, Web UI, and CLI.
+
 ### Build Optimizations
 
 The production build includes several optimizations:
@@ -242,7 +249,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**Note**: The Tauri app looks for the venv at the project root (`rag-cli-project/venv/`). The backend will fail to start if this venv doesn't exist or uses an incompatible Python version.
+**Note**: The built desktop app connects to an existing backend on port 8000. Start the backend with `./start-web.sh` before launching the app. In development mode (`npm run tauri:dev`), the app can spawn its own backend if it finds the venv at the project root.
 
 ## Build Sizes
 

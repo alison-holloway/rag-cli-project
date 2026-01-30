@@ -99,6 +99,15 @@ pub fn get_log_dir() -> PathBuf {
     get_data_dir().join("logs")
 }
 
+/// Check if backend is healthy (blocking version for sync contexts)
+fn check_health_blocking(port: u16) -> bool {
+    let url = format!("http://127.0.0.1:{}/api/health", port);
+    match reqwest::blocking::get(&url) {
+        Ok(response) => response.status().is_success(),
+        Err(_) => false,
+    }
+}
+
 /// Spawn the backend process
 pub fn spawn_backend(state: &Backend) -> Result<u16, String> {
     let mut backend = state.0.lock().map_err(|e| format!("Lock error: {}", e))?;
@@ -107,9 +116,17 @@ pub fn spawn_backend(state: &Backend) -> Result<u16, String> {
         return Ok(backend.port);
     }
 
+    // Check if backend is already running on default port
+    let default_port: u16 = 8000;
+    if check_health_blocking(default_port) {
+        info!("Found existing backend on port {}, reusing it", default_port);
+        backend.port = default_port;
+        return Ok(default_port);
+    }
+
     // Find project directory
     let project_dir = find_project_dir()
-        .ok_or_else(|| "Could not find project directory with backend folder".to_string())?;
+        .ok_or_else(|| "Could not find project directory. Please start the backend manually with ./start-web.sh".to_string())?;
 
     info!("Project directory: {:?}", project_dir);
     backend.project_dir = project_dir.clone();

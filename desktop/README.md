@@ -63,7 +63,13 @@ Before running the app, ensure you have:
    pip install -r requirements.txt
    ```
 
-   **Important**: The desktop app looks for the virtual environment at the project root (`venv/` directory). Ensure this exists before launching the app.
+4. **Start the backend** before launching the desktop app:
+   ```bash
+   cd /path/to/rag-cli-project
+   ./start-web.sh
+   ```
+
+   **Important**: The desktop app connects to an existing backend on port 8000. Always start the backend first using `./start-web.sh` from the project directory.
 
 ## Usage
 
@@ -107,26 +113,36 @@ On first launch, you'll see a welcome screen that introduces the app's features.
 
 If you see a backend connection error:
 
-1. **Check Python version**: Must be Python 3.13 (not 3.14)
+1. **Start the backend manually** (required for the desktop app):
+   ```bash
+   cd /path/to/rag-cli-project
+   ./start-web.sh
+   ```
+   The desktop app connects to an existing backend on port 8000. It does not bundle its own backend.
+
+2. **Check Python version**: Must be Python 3.13 (not 3.14)
    ```bash
    # Check what version is in the venv
    ./venv/bin/python --version
    ```
 
-2. **Ensure virtual environment exists** at the project root:
+3. **Ensure virtual environment exists** at the project root:
    ```bash
    ls -la /path/to/rag-cli-project/venv/
    ```
 
-3. **Verify dependencies are installed**:
+4. **Verify dependencies are installed**:
    ```bash
    source venv/bin/activate
    pip list | grep chromadb
    ```
 
-4. Make sure Ollama is running (`ollama serve`)
+5. Make sure Ollama is running (`ollama serve`)
 
-5. Click "Restart Backend" in the app to retry
+6. Verify the backend is healthy:
+   ```bash
+   curl http://localhost:8000/api/health
+   ```
 
 ### Python Version Issues
 
@@ -160,33 +176,36 @@ Since the app is not signed, macOS will show a warning. To open:
 
 ## Data Storage
 
-All data is stored locally in:
+The desktop app shares data with the Web UI and CLI. All document data is stored in:
 ```
-~/Library/Application Support/RAG Assistant/
+<project-root>/data/
 ```
 
 This includes:
-- ChromaDB vector database
-- Chat history
-- Application settings
+- `data/vector_db/` - ChromaDB vector database
+- `data/documents/` - Uploaded source documents
+
+Documents indexed via the Web UI, CLI, or desktop app are all accessible from any interface.
 
 ## Architecture
 
 ```
 RAG Assistant Desktop
 ├── Tauri Shell (Rust)
-│   ├── Backend Process Management
 │   ├── Native Menu Bar
 │   └── System Notifications
 ├── React Frontend (WebView)
 │   ├── Chat Interface
 │   ├── Document Upload
 │   └── Settings Panel
-└── FastAPI Backend (Python)
+└── FastAPI Backend (External, port 8000)
+    ├── Started via ./start-web.sh
     ├── Document Processing
     ├── Vector Storage (ChromaDB)
     └── LLM Integration (Ollama)
 ```
+
+**Note**: The desktop app connects to the backend started via `./start-web.sh`. This allows the desktop app, Web UI, and CLI to share the same document database.
 
 ## License
 

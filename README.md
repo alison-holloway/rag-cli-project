@@ -761,7 +761,7 @@ RAG Assistant is also available as a native macOS desktop application, built wit
 2. Open the DMG and drag RAG Assistant to Applications
 3. On first launch, right-click and select "Open" (required for unsigned apps)
 
-**Prerequisites**: Python 3.13 (in a virtual environment), [Ollama](https://ollama.ai), and the project dependencies must be installed.
+**Prerequisites**: Python 3.13 (in a virtual environment), [Ollama](https://ollama.ai), project dependencies, and the backend running via `./start-web.sh`.
 
 ### Quick Start
 
@@ -773,9 +773,15 @@ RAG Assistant is also available as a native macOS desktop application, built wit
    pip install -r requirements.txt
    ```
 2. Ensure Ollama is running (`ollama serve`)
-3. Double-click RAG Assistant in Applications
-4. Upload documents via the sidebar
-5. Start asking questions!
+3. Start the backend:
+   ```bash
+   ./start-web.sh
+   ```
+4. Double-click RAG Assistant in Applications
+5. Upload documents via the sidebar
+6. Start asking questions!
+
+**Note**: The desktop app connects to the backend on port 8000. Documents indexed via the desktop app, Web UI, or CLI are shared across all interfaces.
 
 ### Documentation
 
