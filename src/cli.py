@@ -308,7 +308,7 @@ def add(ctx: click.Context, path: str, recursive: bool, force: bool) -> None:
         files = [path]
     else:
         # Load from directory
-        supported_extensions = loader.supported_extensions()
+        supported_extensions = loader.supported_extensions
         files = []
         if recursive:
             for ext in supported_extensions:
@@ -319,7 +319,7 @@ def add(ctx: click.Context, path: str, recursive: bool, force: bool) -> None:
 
     if not files:
         print_warning(f"No supported documents found in {path}")
-        print_info(f"Supported formats: {', '.join(loader.supported_extensions())}")
+        print_info(f"Supported formats: {', '.join(loader.supported_extensions)}")
         return
 
     console.print(f"Found [cyan]{len(files)}[/cyan] document(s) to process")
