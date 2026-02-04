@@ -1011,6 +1011,20 @@ lsof -i :5173
 uvicorn backend.main:app --port 8001  # Use different backend port
 ```
 
+#### Backend Fails with "No module named 'fastapi'"
+
+```
+ModuleNotFoundError: No module named 'fastapi'
+```
+
+**Problem:** The web dependencies are not installed. The base `requirements.txt` only includes CLI dependencies.
+
+**Solution:** Install the web dependencies:
+
+```bash
+pip install -r requirements-web.txt
+```
+
 #### CORS Errors in Browser Console
 
 ```
