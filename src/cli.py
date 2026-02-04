@@ -9,6 +9,7 @@ from rich.table import Table
 
 from . import __version__
 from .config import get_settings
+from .embedder import set_verbose_mode
 from .logger import get_logger, set_log_level, setup_logging
 from .progress import (
     print_error,
@@ -196,6 +197,9 @@ def cli(ctx: click.Context, verbose: bool, debug: bool) -> None:
     ctx.obj["logger"] = log
     ctx.obj["debug"] = debug
     ctx.obj["verbose"] = verbose or debug
+
+    # Set verbose mode for embedder (controls model loading progress bars)
+    set_verbose_mode(verbose or debug)
 
     log.debug("RAG CLI initialized")
 

@@ -3,14 +3,38 @@
 Generates vector embeddings from text using sentence-transformers.
 """
 
+from __future__ import annotations
+
+import logging
+import os
+from typing import TYPE_CHECKING
+
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
 from .chunker import Chunk
 from .config import get_settings
 from .logger import get_logger
 
+if TYPE_CHECKING:
+    from sentence_transformers import SentenceTransformer
+
 logger = get_logger(__name__)
+
+# Module-level verbose setting for the singleton
+_verbose_mode: bool = False
+
+
+def set_verbose_mode(verbose: bool) -> None:
+    """Set the verbose mode for model loading.
+
+    Call this before get_embedder() to control whether
+    progress bars are shown during model loading.
+
+    Args:
+        verbose: If True, show progress bars. If False, suppress them.
+    """
+    global _verbose_mode
+    _verbose_mode = verbose
 
 
 class Embedder:
@@ -20,24 +44,74 @@ class Embedder:
     balance of speed and quality for semantic search.
     """
 
-    def __init__(self, model_name: str | None = None):
+    def __init__(self, model_name: str | None = None, verbose: bool = False):
         """Initialize the embedder.
 
         Args:
             model_name: Name of the sentence-transformer model to use.
                        Defaults to config setting (all-MiniLM-L6-v2).
+            verbose: If True, show progress bars during model loading.
+                    If False, suppress HuggingFace progress output.
         """
         settings = get_settings()
         self.model_name = model_name or settings.embedding.embedding_model
+        self.verbose = verbose
 
         logger.info(f"Loading embedding model: {self.model_name}")
-        self._model: SentenceTransformer | None = None
+        self._model: "SentenceTransformer | None" = None
+
+    def _suppress_hf_logging(self) -> None:
+        """Suppress HuggingFace/transformers progress bars and verbose output."""
+        # Suppress HuggingFace Hub progress bars
+        os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
+
+        # Suppress tqdm progress bars (used by safetensors for weight loading)
+        os.environ["TQDM_DISABLE"] = "1"
+
+        # Suppress transformers logging
+        try:
+            import transformers
+
+            transformers.logging.set_verbosity_error()
+        except ImportError:
+            pass
+
+        # Suppress sentence-transformers tqdm output
+        logging.getLogger("sentence_transformers").setLevel(logging.WARNING)
+
+    def _restore_hf_logging(self) -> None:
+        """Restore HuggingFace logging to normal levels."""
+        # Remove the environment variables
+        os.environ.pop("HF_HUB_DISABLE_PROGRESS_BARS", None)
+        os.environ.pop("TQDM_DISABLE", None)
+
+        # Restore transformers logging
+        try:
+            import transformers
+
+            transformers.logging.set_verbosity_warning()
+        except ImportError:
+            pass
 
     @property
-    def model(self) -> SentenceTransformer:
+    def model(self) -> "SentenceTransformer":
         """Lazy load the model on first use."""
         if self._model is None:
-            self._model = SentenceTransformer(self.model_name)
+            # Suppress progress bars if not in verbose mode
+            if not self.verbose:
+                self._suppress_hf_logging()
+
+            try:
+                # Import SentenceTransformer here after setting env vars
+                # to ensure tqdm respects TQDM_DISABLE
+                from sentence_transformers import SentenceTransformer
+
+                self._model = SentenceTransformer(self.model_name)
+            finally:
+                # Restore logging after model load
+                if not self.verbose:
+                    self._restore_hf_logging()
+
             logger.info(
                 f"Loaded model {self.model_name} "
                 f"(dimension: {self.embedding_dimension})"
@@ -205,13 +279,19 @@ class Embedder:
 _embedder: Embedder | None = None
 
 
-def get_embedder() -> Embedder:
+def get_embedder(verbose: bool | None = None) -> Embedder:
     """Get the global embedder instance.
+
+    Args:
+        verbose: If provided, override the module-level verbose setting.
+                If None, use the setting from set_verbose_mode().
 
     Returns:
         Singleton Embedder instance.
     """
     global _embedder
     if _embedder is None:
-        _embedder = Embedder()
+        # Use provided verbose, or fall back to module-level setting
+        use_verbose = verbose if verbose is not None else _verbose_mode
+        _embedder = Embedder(verbose=use_verbose)
     return _embedder
