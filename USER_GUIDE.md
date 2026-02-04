@@ -35,8 +35,10 @@ RAG CLI runs entirely on your computer (when using Ollama), so your documents st
 
 Before you begin, make sure you have:
 
-1. **Python 3.13** installed on your computer
+1. **Python 3.12 or 3.13** installed on your computer
    - Check with: `python3 --version`
+   - macOS Intel users: **Use Python 3.12** (some dependencies lack 3.13 support for x86_64)
+   - macOS Apple Silicon / Linux / Windows: Python 3.12 or 3.13
    - Note: Python 3.14 is not yet supported
 
 2. **Ollama** - A free, local AI model runner
@@ -57,7 +59,8 @@ Before you begin, make sure you have:
 
 2. **Create a Python virtual environment**:
    ```bash
-   python3.13 -m venv venv
+   # Use python3.12 on Intel Mac, python3.12 or python3.13 elsewhere
+   python3.12 -m venv venv
    source venv/bin/activate
    ```
 
@@ -520,17 +523,19 @@ ollama pull llama3.1:8b
 **Problem:** Errors about Python compatibility or ChromaDB.
 
 **Solution:**
-Make sure you're using Python 3.13:
+Make sure you're using Python 3.12 (recommended) or 3.13:
 ```bash
 # Check your version
 python --version
 
 # If wrong, recreate the virtual environment
 rm -rf venv
-python3.13 -m venv venv
+python3.12 -m venv venv  # Use 3.12 for best compatibility
 source venv/bin/activate
 pip install -r requirements.txt
 ```
+
+**Note:** macOS Intel users must use Python 3.12 (onnxruntime lacks 3.13 wheels for x86_64).
 
 ### Where to Find Logs
 

@@ -27,17 +27,18 @@ This guide covers how to build the RAG Assistant desktop application from source
    cargo install tauri-cli
    ```
 
-4. **Python 3.13** (for the backend - Python 3.14 is not yet supported by ChromaDB):
+4. **Python 3.12** (for the backend - recommended for broadest compatibility):
    ```bash
    # Install with Homebrew
-   brew install python@3.13
+   brew install python@3.12
 
    # Set up virtual environment at project root
    cd /path/to/rag-cli-project
-   python3.13 -m venv venv
+   python3.12 -m venv venv
    source venv/bin/activate
    pip install -r requirements.txt
    ```
+   **Note:** Intel Mac users must use Python 3.12 (onnxruntime lacks 3.13 wheels for x86_64).
 
 ### macOS-Specific Requirements
 
@@ -236,18 +237,20 @@ export PATH="$HOME/.cargo/bin:$PATH"
 
 ### Python Version Issues
 
-The desktop app requires Python 3.13 for ChromaDB compatibility. If you have Python 3.14:
+The desktop app requires Python 3.12 or 3.13. If you have Python 3.14:
 
 ```bash
 # Check what Python version the venv uses
 ./venv/bin/python --version
 
-# If it's not 3.13, recreate the venv
+# If it's not 3.12 or 3.13, recreate the venv
 rm -rf venv
-python3.13 -m venv venv
+python3.12 -m venv venv  # Use 3.12 for broadest compatibility
 source venv/bin/activate
 pip install -r requirements.txt
 ```
+
+**Note:** Intel Mac users must use Python 3.12 (onnxruntime lacks 3.13 wheels for x86_64).
 
 **Note**: The built desktop app connects to an existing backend on port 8000. Start the backend with `./start-web.sh` before launching the app. In development mode (`npm run tauri:dev`), the app can spawn its own backend if it finds the venv at the project root.
 

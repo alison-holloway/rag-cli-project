@@ -63,7 +63,7 @@ npm run tauri dev
 **Prerequisites**:
 - Rust and Cargo installed
 - Tauri CLI (`cargo install tauri-cli`)
-- Python 3.13 virtual environment at project root
+- Python 3.12 virtual environment at project root (3.12 recommended for broadest compatibility)
 
 ## Building
 

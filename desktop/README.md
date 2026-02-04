@@ -14,7 +14,8 @@ A native macOS desktop application for the RAG Assistant, providing local docume
 
 - macOS 10.15 (Catalina) or later
 - Apple Silicon (M1/M2/M3) or Intel processor
-- Python 3.13 (required for ChromaDB compatibility; Python 3.14 is not yet supported)
+- Python 3.12 or 3.13 (Python 3.14 is not yet supported)
+  - **Intel Mac users**: Use Python 3.12 (onnxruntime lacks 3.13 wheels for x86_64)
 - Ollama installed and running
 
 ## Installation
@@ -30,13 +31,13 @@ A native macOS desktop application for the RAG Assistant, providing local docume
 
 Before running the app, ensure you have:
 
-1. **Python 3.13** installed (Python 3.14 is not yet supported by ChromaDB):
+1. **Python 3.12** installed (recommended; 3.13 works on Apple Silicon only):
    ```bash
    # Check version
-   python3.13 --version
+   python3.12 --version
 
    # Install with Homebrew if needed
-   brew install python@3.13
+   brew install python@3.12
    ```
 
 2. **Ollama** installed and running:
@@ -55,8 +56,8 @@ Before running the app, ensure you have:
    ```bash
    cd /path/to/rag-cli-project
 
-   # Create venv with Python 3.13
-   python3.13 -m venv venv
+   # Create venv with Python 3.12
+   python3.12 -m venv venv
    source venv/bin/activate
 
    # Install dependencies
@@ -120,7 +121,7 @@ If you see a backend connection error:
    ```
    The desktop app connects to an existing backend on port 8000. It does not bundle its own backend.
 
-2. **Check Python version**: Must be Python 3.13 (not 3.14)
+2. **Check Python version**: Must be Python 3.12 or 3.13 (not 3.14)
    ```bash
    # Check what version is in the venv
    ./venv/bin/python --version
@@ -146,19 +147,21 @@ If you see a backend connection error:
 
 ### Python Version Issues
 
-ChromaDB requires Python 3.13 or earlier. If you have Python 3.14 as your system default:
+ChromaDB requires Python 3.12 or 3.13. If you have Python 3.14 as your system default:
 
 ```bash
-# Install Python 3.13
-brew install python@3.13
+# Install Python 3.12 (recommended for broadest compatibility)
+brew install python@3.12
 
 # Recreate the virtual environment
 cd /path/to/rag-cli-project
 rm -rf venv
-python3.13 -m venv venv
+python3.12 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
+
+**Note:** Intel Mac users must use Python 3.12 (onnxruntime lacks 3.13 wheels for x86_64).
 
 ### Gatekeeper Warning
 

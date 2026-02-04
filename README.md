@@ -36,7 +36,10 @@ A Retrieval-Augmented Generation (RAG) system for querying your documents using 
 
 ### Prerequisites
 
-- Python 3.13 (required for ChromaDB compatibility; Python 3.14 is not yet supported)
+- **Python 3.12 or 3.13** (Python 3.14 is not yet supported)
+  - macOS Apple Silicon (M1/M2/M3): Python 3.12 or 3.13
+  - macOS Intel: **Python 3.12 required** (onnxruntime lacks 3.13 wheels for x86_64)
+  - Linux/Windows: Python 3.12 or 3.13
 - [Ollama](https://ollama.ai) installed (the CLI will start it automatically)
 
 ### Installation
@@ -47,7 +50,8 @@ git clone <repository-url>
 cd rag-cli-project
 
 # Create virtual environment
-python -m venv venv
+# Use python3.12 on Intel Mac, python3.12 or python3.13 elsewhere
+python3.12 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install dependencies
@@ -761,14 +765,14 @@ RAG Assistant is also available as a native macOS desktop application, built wit
 2. Open the DMG and drag RAG Assistant to Applications
 3. On first launch, right-click and select "Open" (required for unsigned apps)
 
-**Prerequisites**: Python 3.13 (in a virtual environment), [Ollama](https://ollama.ai), project dependencies, and the backend running via `./start-web.sh`.
+**Prerequisites**: Python 3.12 or 3.13 (in a virtual environment), [Ollama](https://ollama.ai), project dependencies, and the backend running via `./start-web.sh`.
 
 ### Quick Start
 
-1. Set up the project with Python 3.13:
+1. Set up the project with Python 3.12:
    ```bash
    cd /path/to/rag-cli-project
-   python3.13 -m venv venv
+   python3.12 -m venv venv
    source venv/bin/activate
    pip install -r requirements.txt
    ```
@@ -963,6 +967,30 @@ For large documents, try:
 - Reducing chunk size in config
 - Processing documents in smaller batches
 - Using a machine with more RAM
+
+### Installation Fails with onnxruntime Error
+
+```
+ERROR: ResolutionImpossible ... onnxruntime
+```
+
+**Problem:** The `onnxruntime` package (required by ChromaDB) doesn't have pre-built wheels for your Python version and platform combination. This commonly affects macOS Intel users with Python 3.13.
+
+**Solutions:**
+
+1. **Use Python 3.12** (recommended for Intel Mac):
+   ```bash
+   python3.12 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+
+2. **Use conda** (works on any platform):
+   ```bash
+   conda create -n rag-cli python=3.12
+   conda activate rag-cli
+   pip install -r requirements.txt
+   ```
 
 ### Web UI Issues
 

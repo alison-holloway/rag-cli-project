@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 RAG CLI is a Retrieval-Augmented Generation system for document question-answering. It provides multiple interfaces: CLI, REST API (FastAPI), Web UI (React/Vite), and native macOS desktop app (Tauri).
 
-**Key technologies:** Python 3.13, ChromaDB, sentence-transformers (all-MiniLM-L6-v2), Ollama, FastAPI, React, Tauri
+**Key technologies:** Python 3.12+, ChromaDB, sentence-transformers (all-MiniLM-L6-v2), Ollama, FastAPI, React, Tauri
 
 ## Common Commands
 
