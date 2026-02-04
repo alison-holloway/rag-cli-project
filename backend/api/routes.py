@@ -3,6 +3,7 @@
 from fastapi import APIRouter, File, HTTPException, Query, UploadFile
 
 from backend.api.models import (
+    ConfigResponse,
     DeleteResponse,
     DocumentListResponse,
     ErrorResponse,
@@ -26,6 +27,18 @@ async def health_check():
     """
     service = get_rag_service()
     return service.get_health()
+
+
+@router.get("/config", response_model=ConfigResponse)
+async def get_config():
+    """
+    Get configuration settings.
+
+    Returns the current configuration including default LLM provider,
+    retrieval settings, and chunking parameters.
+    """
+    service = get_rag_service()
+    return service.get_config()
 
 
 @router.post(

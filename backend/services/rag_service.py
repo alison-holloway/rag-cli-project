@@ -51,22 +51,30 @@ class RAGService:
     def query(
         self,
         question: str,
-        llm_provider: str = "ollama",
-        top_k: int = 5,
-        temperature: float = 0.7,
+        llm_provider: str | None = None,
+        top_k: int | None = None,
+        temperature: float | None = None,
     ) -> dict:
         """
         Query the knowledge base and get an answer.
 
         Args:
             question: The question to ask.
-            llm_provider: LLM provider ('ollama' or 'claude').
-            top_k: Number of chunks to retrieve.
-            temperature: LLM temperature.
+            llm_provider: LLM provider ('ollama' or 'claude'). Defaults to config.
+            top_k: Number of chunks to retrieve. Defaults to config.
+            temperature: LLM temperature. Defaults to config.
 
         Returns:
             Dictionary with answer, sources, and metadata.
         """
+        # Use settings for defaults
+        if llm_provider is None:
+            llm_provider = self._settings.llm.default_llm_provider
+        if top_k is None:
+            top_k = self._settings.retrieval.top_k_results
+        if temperature is None:
+            temperature = self._settings.llm.llm_temperature
+
         start_time = time.time()
 
         # Check if we have documents
@@ -286,6 +294,23 @@ class RAGService:
     def get_supported_extensions(self) -> list[str]:
         """Get list of supported file extensions."""
         return self.document_loader.supported_extensions
+
+    def get_config(self) -> dict:
+        """
+        Get current configuration settings.
+
+        Returns:
+            Dictionary with configuration values.
+        """
+        return {
+            "llm_provider": self._settings.llm.default_llm_provider,
+            "llm_model": self._settings.llm.ollama_model,
+            "top_k": self._settings.retrieval.top_k_results,
+            "temperature": self._settings.llm.llm_temperature,
+            "chunk_size": self._settings.chunking.chunk_size,
+            "chunk_overlap": self._settings.chunking.chunk_overlap,
+            "embedding_model": self._settings.embedding.embedding_model,
+        }
 
 
 # Singleton instance

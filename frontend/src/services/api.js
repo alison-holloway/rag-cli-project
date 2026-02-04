@@ -40,35 +40,55 @@ export function setApiBaseUrl(baseUrl) {
 }
 
 /**
+ * Get configuration settings from the backend
+ * @returns {Promise<Object>} Configuration settings
+ */
+export async function getConfig() {
+  const response = await fetch(`${API_BASE_URL}/config`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to get config: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+/**
  * Query the knowledge base with a question
  * @param {string} query - The question to ask
- * @param {Object} options - Query options
- * @param {string} options.llmProvider - LLM provider ('ollama' or 'claude')
- * @param {number} options.topK - Number of chunks to retrieve
- * @param {number} options.temperature - LLM temperature
- * @param {boolean} options.showSources - Whether to include source information
+ * @param {Object} options - Query options (all optional, backend uses config defaults)
+ * @param {string} [options.llmProvider] - LLM provider ('ollama' or 'claude')
+ * @param {number} [options.topK] - Number of chunks to retrieve
+ * @param {number} [options.temperature] - LLM temperature
+ * @param {boolean} [options.showSources] - Whether to include source information
  * @returns {Promise<Object>} Query response with answer, sources, and metadata
  */
 export async function queryKnowledgeBase(query, options = {}) {
-  const {
-    llmProvider = 'ollama',
-    topK = 5,
-    temperature = 0.7,
-    showSources = true,
-  } = options;
+  const { llmProvider, topK, temperature, showSources = true } = options;
+
+  // Build request body, only including values that were explicitly set
+  const body = {
+    query,
+    show_sources: showSources,
+  };
+
+  // Only include optional params if they were explicitly provided
+  if (llmProvider !== undefined) {
+    body.llm_provider = llmProvider;
+  }
+  if (topK !== undefined) {
+    body.top_k = topK;
+  }
+  if (temperature !== undefined) {
+    body.temperature = temperature;
+  }
 
   const response = await fetch(`${API_BASE_URL}/query`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      query,
-      llm_provider: llmProvider,
-      top_k: topK,
-      temperature,
-      show_sources: showSources,
-    }),
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {

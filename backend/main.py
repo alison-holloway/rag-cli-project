@@ -42,7 +42,7 @@ app.add_middleware(
         "http://localhost:3000",  # Create React App default
         "http://127.0.0.1:5173",
         "http://127.0.0.1:3000",
-        "tauri://localhost",      # Tauri desktop app (macOS/Linux)
+        "tauri://localhost",  # Tauri desktop app (macOS/Linux)
         "https://tauri.localhost",  # Tauri desktop app (Windows)
     ],
     allow_credentials=True,

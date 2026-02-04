@@ -12,14 +12,20 @@ class QueryRequest(BaseModel):
     """Request model for querying the knowledge base."""
 
     query: str = Field(..., min_length=1, description="The question to ask")
-    llm_provider: Literal["ollama", "claude"] = Field(
-        default="ollama", description="LLM provider to use"
+    llm_provider: Literal["ollama", "claude"] | None = Field(
+        default=None, description="LLM provider to use (defaults to config setting)"
     )
-    top_k: int = Field(
-        default=5, ge=1, le=20, description="Number of chunks to retrieve"
+    top_k: int | None = Field(
+        default=None,
+        ge=1,
+        le=100,
+        description="Number of chunks to retrieve (defaults to config)",
     )
-    temperature: float = Field(
-        default=0.7, ge=0.0, le=1.0, description="LLM temperature"
+    temperature: float | None = Field(
+        default=None,
+        ge=0.0,
+        le=2.0,
+        description="LLM temperature (defaults to config)",
     )
     show_sources: bool = Field(default=True, description="Include source information")
 
@@ -109,3 +115,15 @@ class ErrorResponse(BaseModel):
     error: str = Field(..., description="Error type")
     message: str = Field(..., description="Error message")
     detail: str | None = Field(None, description="Additional details")
+
+
+class ConfigResponse(BaseModel):
+    """Response model for configuration settings."""
+
+    llm_provider: str = Field(..., description="Default LLM provider")
+    llm_model: str = Field(..., description="Ollama model name")
+    top_k: int = Field(..., description="Default number of chunks to retrieve")
+    temperature: float = Field(..., description="Default LLM temperature")
+    chunk_size: int = Field(..., description="Document chunk size")
+    chunk_overlap: int = Field(..., description="Document chunk overlap")
+    embedding_model: str = Field(..., description="Embedding model name")
