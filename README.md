@@ -372,24 +372,24 @@ Configuration is loaded from environment variables and `.env` files.
 
 ```bash
 # LLM Settings
-RAG_DEFAULT_LLM_PROVIDER=ollama  # or 'claude'
-RAG_OLLAMA_MODEL=llama3.1:8b
-RAG_OLLAMA_BASE_URL=http://localhost:11434
-RAG_LLM_TEMPERATURE=0.7
-RAG_MAX_TOKENS=1000
+DEFAULT_LLM_PROVIDER=ollama  # or 'claude'
+OLLAMA_MODEL=llama3.1:8b
+OLLAMA_BASE_URL=http://localhost:11434
+LLM_TEMPERATURE=0.3
+MAX_TOKENS=2000
 
 # Embedding Settings
-RAG_EMBEDDING_MODEL=all-MiniLM-L6-v2
+EMBEDDING_MODEL=all-MiniLM-L6-v2
 
 # Chunking Settings
-RAG_CHUNK_SIZE=800
-RAG_CHUNK_OVERLAP=100
+CHUNK_SIZE=800
+CHUNK_OVERLAP=100
 
 # Retrieval Settings
-RAG_TOP_K_RESULTS=5
+TOP_K_RESULTS=5
 
 # Vector Store
-RAG_VECTOR_DB_PATH=./data/vector_db
+CHROMA_PERSIST_DIR=./data/vector_db
 
 # Claude API (optional)
 ANTHROPIC_API_KEY=your_api_key_here
