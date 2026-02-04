@@ -215,6 +215,7 @@ data/uploads/
 logs/*
 !logs/.gitkeep
 .DS_Store
+rag-config-recommendations.md
 
 # Node.js / Frontend
 node_modules/
