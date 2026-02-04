@@ -108,6 +108,7 @@ FastAPI REST API wrapping the core pipeline:
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/health` | Health check with Ollama status |
+| GET | `/api/config` | Get configuration settings (defaults from .env) |
 | POST | `/api/query` | Query knowledge base |
 | POST | `/api/upload` | Upload and index a document |
 | GET | `/api/documents` | List all indexed documents |

@@ -532,17 +532,43 @@ The API will be available at `http://localhost:8000`.
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/health` | Health check with Ollama status and document stats |
+| GET | `/api/config` | Get configuration settings (from `.env` file) |
 | POST | `/api/query` | Query the knowledge base with a question |
 | POST | `/api/upload` | Upload and index a document |
 | GET | `/api/documents` | List all indexed documents |
 | DELETE | `/api/documents/{id}` | Delete a document from the knowledge base |
 
+### Example: Get Configuration
+
+```bash
+curl http://localhost:8000/api/config
+```
+
+Response:
+```json
+{
+  "llm_provider": "ollama",
+  "llm_model": "llama3.1:8b",
+  "top_k": 8,
+  "temperature": 0.3,
+  "chunk_size": 1200,
+  "chunk_overlap": 200,
+  "embedding_model": "all-MiniLM-L6-v2"
+}
+```
+
 ### Example: Query the Knowledge Base
 
 ```bash
+# Query with default settings (from .env config)
 curl -X POST http://localhost:8000/api/query \
   -H "Content-Type: application/json" \
-  -d '{"query": "What is Python?", "top_k": 5}'
+  -d '{"query": "What is Python?"}'
+
+# Query with custom settings (override defaults)
+curl -X POST http://localhost:8000/api/query \
+  -H "Content-Type: application/json" \
+  -d '{"query": "What is Python?", "top_k": 5, "temperature": 0.7}'
 ```
 
 ### Example: Upload a Document
