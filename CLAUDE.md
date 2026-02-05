@@ -77,6 +77,13 @@ cd frontend && npm run tauri:dev    # Development
 cd frontend && npm run tauri:build  # Build release
 ```
 
+**HTML Scraper (download documentation):**
+```bash
+python tools/html_scraper.py              # Use default config
+python tools/html_scraper.py --dry-run    # Preview without downloading
+python tools/html_scraper.py --verbose    # Detailed progress
+```
+
 ## Architecture
 
 ### Core RAG Pipeline (`src/`)

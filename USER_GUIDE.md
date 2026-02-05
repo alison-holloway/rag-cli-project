@@ -9,6 +9,7 @@ Welcome to RAG CLI! This guide will help you get started with using the applicat
 - [CLI Interface](#cli-interface)
 - [Web UI Interface](#web-ui-interface)
 - [Examples](#examples)
+- [Downloading Documentation](#downloading-documentation)
 - [Troubleshooting](#troubleshooting)
 
 ---
@@ -446,6 +447,68 @@ rag-cli chat
    ```bash
    ./stop-web.sh
    ```
+
+---
+
+## Downloading Documentation
+
+RAG CLI includes a tool for downloading HTML documentation from websites. This is useful for building a knowledge base from online documentation.
+
+### HTML Scraper Tool
+
+The HTML scraper downloads documentation from Table of Contents (TOC) pages and saves the HTML files locally for indexing.
+
+**Basic usage:**
+
+```bash
+# Download using the default configuration
+python tools/html_scraper.py
+
+# Preview what would be downloaded (without actually downloading)
+python tools/html_scraper.py --dry-run
+
+# See detailed progress
+python tools/html_scraper.py --verbose
+```
+
+**Configuration:**
+
+Edit `config/html_scraper.yaml` to specify which documentation to download:
+
+```yaml
+# Where to save downloaded HTML files
+output_dir: data/documents/html/
+
+# Delay between requests (be respectful to servers)
+delay_seconds: 1.0
+
+# TOC pages to process
+sources:
+  - https://docs.example.com/guide/toc.htm
+  - https://docs.example.com/reference/toc.htm
+
+# URL patterns to skip
+skip_patterns:
+  - index.htm
+  - toc.htm
+  - copyright
+```
+
+**After downloading, index the files:**
+
+```bash
+# Add downloaded HTML files to RAG
+rag-cli add data/documents/html/ -r
+
+# Verify they were indexed
+rag-cli list
+```
+
+Now you can query the documentation:
+
+```bash
+rag-cli query "How do I configure X?"
+```
 
 ---
 

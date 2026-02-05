@@ -905,12 +905,59 @@ rag-cli-project/
 │   ├── documents/         # Source documents
 │   └── vector_db/         # ChromaDB storage
 ├── logs/                   # Log files
+├── tools/                  # Utility scripts
+│   └── html_scraper.py    # Download HTML documentation
+├── config/                 # Configuration files
+│   └── html_scraper.yaml  # HTML scraper config
 ├── requirements.txt        # Core dependencies
 ├── requirements-web.txt    # Web API dependencies
 ├── start-web.sh           # Start web application
 ├── stop-web.sh            # Stop web application
 ├── pyproject.toml         # Project config
 └── README.md              # This file
+```
+
+## Tools
+
+### HTML Documentation Scraper
+
+Download HTML documentation files from TOC (Table of Contents) pages for indexing into the RAG system.
+
+```bash
+# Download using default config (config/html_scraper.yaml)
+python tools/html_scraper.py
+
+# Preview what would be downloaded (dry run)
+python tools/html_scraper.py --dry-run
+
+# Use custom config file
+python tools/html_scraper.py --config /path/to/config.yaml
+
+# Override output directory or delay
+python tools/html_scraper.py --output-dir ./html_output --delay 2.0
+
+# Verbose output
+python tools/html_scraper.py --verbose
+```
+
+**Configuration (`config/html_scraper.yaml`):**
+
+```yaml
+output_dir: data/documents/html/
+delay_seconds: 1.0
+sources:
+  - https://docs.example.com/guide/toc.htm
+  - https://docs.example.com/reference/toc.htm
+skip_patterns:
+  - index.htm
+  - toc.htm
+  - copyright
+```
+
+After downloading, index the HTML files:
+
+```bash
+rag-cli add data/documents/html/ -r
 ```
 
 ## Troubleshooting
