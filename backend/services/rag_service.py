@@ -77,6 +77,9 @@ class RAGService:
 
         start_time = time.time()
 
+        # Refresh to see changes made by CLI or other processes
+        self.vector_store.refresh()
+
         # Check if we have documents
         if self.vector_store.count() == 0:
             raise ValueError("No documents indexed. Please upload documents first.")
@@ -211,6 +214,9 @@ class RAGService:
         Returns:
             Dictionary with document list and statistics.
         """
+        # Refresh collection to see changes made by CLI or other processes
+        self.vector_store.refresh()
+
         documents = self.vector_store.list_documents()
         total_chunks = self.vector_store.count()
 
@@ -278,6 +284,9 @@ class RAGService:
             ollama_available = llm_client.is_available()
         except Exception:
             pass
+
+        # Refresh to see changes made by CLI or other processes
+        self.vector_store.refresh()
 
         # Get document stats
         total_chunks = self.vector_store.count()

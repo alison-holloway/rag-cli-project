@@ -104,6 +104,19 @@ class VectorStore:
         """Get the ChromaDB collection."""
         return self._collection
 
+    def refresh(self) -> None:
+        """Refresh the collection reference from ChromaDB.
+
+        This reloads the collection from disk, ensuring any changes made
+        by other processes (e.g., CLI adding documents while backend is running)
+        are visible.
+        """
+        self._collection = self._client.get_or_create_collection(
+            name=self.collection_name,
+            metadata={"description": "RAG CLI document embeddings"},
+        )
+        logger.debug(f"Refreshed collection '{self.collection_name}'")
+
     def count(self) -> int:
         """Get the number of documents in the collection."""
         return self._collection.count()

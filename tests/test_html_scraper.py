@@ -1,15 +1,22 @@
 """Tests for the HTML documentation scraper."""
 
-# Import the scraper module
-import sys
+import importlib.util
 import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "tools"))
-from html_scraper import HTMLScraper, ScraperConfig, ScraperStats, load_config
+# Dynamically import the scraper module from tools directory
+_scraper_path = Path(__file__).parent.parent / "tools" / "html_scraper.py"
+_spec = importlib.util.spec_from_file_location("html_scraper", _scraper_path)
+_html_scraper = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_html_scraper)
+
+HTMLScraper = _html_scraper.HTMLScraper
+ScraperConfig = _html_scraper.ScraperConfig
+ScraperStats = _html_scraper.ScraperStats
+load_config = _html_scraper.load_config
 
 
 class TestScraperConfig:
