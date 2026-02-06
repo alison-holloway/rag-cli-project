@@ -103,13 +103,13 @@ class ChunkingSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="", extra="ignore")
 
     chunk_size: int = Field(
-        default=800,
+        default=1200,
         ge=100,
         le=10000,
         description="Size of text chunks in characters",
     )
     chunk_overlap: int = Field(
-        default=100,
+        default=200,
         ge=0,
         description="Overlap between chunks in characters",
     )
@@ -121,7 +121,7 @@ class RetrievalSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="", extra="ignore")
 
     top_k_results: int = Field(
-        default=5,
+        default=8,
         ge=1,
         le=100,
         description="Number of chunks to retrieve",

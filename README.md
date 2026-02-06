@@ -202,7 +202,7 @@ rag-cli -v query "What is Python?"
 ```
 
 **Options:**
-- `-k, --top-k`: Number of chunks to retrieve (default: 5)
+- `-k, --top-k`: Number of chunks to retrieve (default: 8)
 - `-l, --llm`: LLM provider (`ollama` or `claude`, default: ollama)
 - `-t, --temperature`: Response creativity (0.0-1.0)
 - `-s, --show-sources`: Display source documents used for the answer
@@ -325,8 +325,8 @@ Total chunks         23
 Collection           rag_documents
 
 Embedding model      all-MiniLM-L6-v2
-Chunk size           800
-Chunk overlap        100
+Chunk size           1200
+Chunk overlap        200
 LLM provider         ollama
 ```
 
@@ -387,11 +387,11 @@ MAX_TOKENS=2000
 EMBEDDING_MODEL=all-MiniLM-L6-v2
 
 # Chunking Settings
-CHUNK_SIZE=800
-CHUNK_OVERLAP=100
+CHUNK_SIZE=1200
+CHUNK_OVERLAP=200
 
 # Retrieval Settings
-TOP_K_RESULTS=5
+TOP_K_RESULTS=8
 
 # Vector Store
 CHROMA_PERSIST_DIR=./data/vector_db

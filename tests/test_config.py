@@ -27,11 +27,11 @@ def test_default_embedding_model() -> None:
 def test_default_chunk_settings() -> None:
     """Test default chunking settings."""
     settings = get_settings()
-    assert settings.chunking.chunk_size == 800
-    assert settings.chunking.chunk_overlap == 100
+    assert settings.chunking.chunk_size == 1200
+    assert settings.chunking.chunk_overlap == 200
 
 
 def test_default_retrieval_settings() -> None:
     """Test default retrieval settings."""
     settings = get_settings()
-    assert settings.retrieval.top_k_results == 5
+    assert settings.retrieval.top_k_results == 8

@@ -162,9 +162,9 @@ rag-cli config get llm.ollama_model
 | `llm.temperature` | Creativity level (0.0-2.0) | `0.3` |
 | `llm.max_tokens` | Maximum response length | `2000` |
 | `embedding.model` | Model for document search | `all-MiniLM-L6-v2` |
-| `chunking.chunk_size` | Document chunk size | `800` |
-| `chunking.chunk_overlap` | Overlap between chunks | `100` |
-| `retrieval.top_k` | Number of chunks to retrieve | `5` |
+| `chunking.chunk_size` | Document chunk size | `1200` |
+| `chunking.chunk_overlap` | Overlap between chunks | `200` |
+| `retrieval.top_k` | Number of chunks to retrieve | `8` |
 | `vector_store.path` | Database storage location | `./data/vector_db` |
 | `logging.level` | Log verbosity | `INFO` |
 
