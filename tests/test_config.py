@@ -34,4 +34,4 @@ def test_default_chunk_settings() -> None:
 def test_default_retrieval_settings() -> None:
     """Test default retrieval settings."""
     settings = get_settings()
-    assert settings.retrieval.top_k_results == 8
+    assert settings.retrieval.top_k_results == 5

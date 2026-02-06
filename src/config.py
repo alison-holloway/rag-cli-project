@@ -121,7 +121,7 @@ class RetrievalSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="", extra="ignore")
 
     top_k_results: int = Field(
-        default=8,
+        default=5,
         ge=1,
         le=100,
         description="Number of chunks to retrieve",

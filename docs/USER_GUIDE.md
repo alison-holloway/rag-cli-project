@@ -164,7 +164,7 @@ rag-cli config get llm.ollama_model
 | `embedding.model` | Model for document search | `all-MiniLM-L6-v2` |
 | `chunking.chunk_size` | Document chunk size | `1200` |
 | `chunking.chunk_overlap` | Overlap between chunks | `200` |
-| `retrieval.top_k` | Number of chunks to retrieve | `8` |
+| `retrieval.top_k` | Number of chunks to retrieve | `5` |
 | `vector_store.path` | Database storage location | `./data/vector_db` |
 | `logging.level` | Log verbosity | `INFO` |
 

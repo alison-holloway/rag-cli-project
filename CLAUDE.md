@@ -146,7 +146,7 @@ Settings are loaded from environment variables. Copy `.env.example` to `.env`:
 - `DEFAULT_LLM_PROVIDER` - "ollama" (free) or "claude"
 - `ANTHROPIC_API_KEY` - Required only for Claude
 - `CHUNK_SIZE` / `CHUNK_OVERLAP` - Text chunking (1200/200)
-- `TOP_K_RESULTS` - Chunks retrieved per query (8)
+- `TOP_K_RESULTS` - Chunks retrieved per query (5)
 
 ## Data Storage
 
