@@ -15,6 +15,7 @@ A Retrieval-Augmented Generation (RAG) system for querying your documents using 
 - [Web UI](#web-ui) - Browser-based interface
 - [macOS Desktop App](#macos-desktop-app) - Native desktop application
 - [Development](#development)
+- [Tools](#tools) - HTML scraper and DITA chunker
 - [Troubleshooting](#troubleshooting)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)

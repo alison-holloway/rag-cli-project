@@ -84,6 +84,13 @@ python tools/html_scraper.py --dry-run    # Preview without downloading
 python tools/html_scraper.py --verbose    # Detailed progress
 ```
 
+**DITA Chunker (semantic chunking for DITA HTML):**
+```bash
+python tools/ingest_dita_docs.py              # Ingest with semantic chunking
+python tools/ingest_dita_docs.py --dry-run    # Preview without storing
+python tools/ingest_dita_docs.py --clear-first # Clear and re-ingest
+```
+
 ## Architecture
 
 ### Core RAG Pipeline (`src/`)
@@ -150,7 +157,8 @@ Settings are loaded from environment variables. Copy `.env.example` to `.env`:
 ## Documentation
 
 - [README.md](README.md) - Main project documentation, CLI reference, installation
-- [USER_GUIDE.md](USER_GUIDE.md) - End-user guide
+- [docs/USER_GUIDE.md](docs/USER_GUIDE.md) - End-user guide
+- [docs/dita_chunker.md](docs/dita_chunker.md) - DITA semantic chunker guide
 - [desktop/README.md](desktop/README.md) - macOS desktop app user guide
 - [desktop/BUILDING.md](desktop/BUILDING.md) - Desktop app build instructions
 - [frontend/README.md](frontend/README.md) - Frontend development docs

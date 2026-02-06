@@ -10,7 +10,10 @@ Welcome to RAG CLI! This guide will help you get started with using the applicat
 - [Web UI Interface](#web-ui-interface)
 - [Examples](#examples)
 - [Downloading Documentation](#downloading-documentation)
+  - [HTML Scraper Tool](#html-scraper-tool)
+  - [DITA Documentation Chunker](#dita-documentation-chunker)
 - [Troubleshooting](#troubleshooting)
+- [Quick Reference Card](#quick-reference-card)
 
 ---
 
