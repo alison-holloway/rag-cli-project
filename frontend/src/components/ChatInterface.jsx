@@ -3,7 +3,7 @@ import MessageList from './MessageList';
 import MessageInput from './MessageInput';
 import SettingsPanel from './SettingsPanel';
 import ThemeToggle from './ThemeToggle';
-import { queryKnowledgeBase } from '../services/api';
+import { queryKnowledgeBase, getConfig } from '../services/api';
 import './ChatInterface.css';
 
 /**
@@ -145,6 +145,23 @@ const ChatInterface = forwardRef(function ChatInterface(props, ref) {
       window.removeEventListener('app-focus-search', handleFocusSearch);
     };
   }, [messages.length]);
+
+  // Fetch configuration from backend on mount
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const config = await getConfig();
+        setSettings({
+          llmProvider: config.llm_provider || 'ollama',
+          topK: config.top_k || 5,
+          temperature: config.temperature || 0.3,
+        });
+      } catch (err) {
+        console.warn('Failed to fetch config, using defaults:', err);
+      }
+    };
+    fetchConfig();
+  }, []);
 
   const handleSend = useCallback(async (question) => {
     // Clear any previous error
