@@ -1,0 +1,16 @@
+# DITA Semantic Chunker Configuration
+#
+# Configuration for semantic chunking of DITA-generated HTML documentation.
+# Respects document structure (tasks, concepts, references) for better RAG retrieval.
+
+# Input/output settings
+input_dir: "data/documents/html/"
+collection_name: "rag_documents"
+
+# Chunk size constraints (characters)
+min_chunk_size: 200
+max_chunk_size: 4000
+target_chunk_size: 1500
+
+# Logging
+verbose: false

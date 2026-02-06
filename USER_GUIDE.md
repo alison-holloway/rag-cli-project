@@ -510,6 +510,59 @@ Now you can query the documentation:
 rag-cli query "How do I configure X?"
 ```
 
+### DITA Documentation Chunker
+
+If your HTML documentation was generated from DITA source (common for enterprise technical documentation), use the DITA semantic chunker for much better query results.
+
+**Why use the DITA chunker?**
+
+Standard chunking splits documents at arbitrary character boundaries, which can break up procedural steps mid-instruction. The DITA chunker understands document structure:
+
+- **Task documents**: Keeps all steps together as a complete procedure
+- **Concept documents**: Preserves explanations as coherent units
+- **Reference documents**: Intelligently splits syntax/parameters from examples
+- **Topic documents**: Chunks at section boundaries
+
+**Basic usage:**
+
+```bash
+# Ingest DITA HTML files with semantic chunking
+python tools/ingest_dita_docs.py
+
+# Preview what would be created (without storing)
+python tools/ingest_dita_docs.py --dry-run
+
+# Clear existing documents and re-ingest fresh
+python tools/ingest_dita_docs.py --clear-first
+
+# See detailed progress
+python tools/ingest_dita_docs.py --verbose
+```
+
+**Configuration:**
+
+Edit `config/dita_chunker.yaml`:
+
+```yaml
+# Where to find DITA HTML files
+input_dir: data/documents/html/
+
+# Chunk size limits (characters)
+min_chunk_size: 200
+max_chunk_size: 4000
+target_chunk_size: 1500
+```
+
+**Results:**
+
+The DITA chunker typically produces ~70% fewer chunks than standard chunking while maintaining complete, meaningful content units. This means:
+
+- Queries return complete procedures, not fragments
+- Better answer quality from the AI
+- Less noise in search results
+
+For technical details, see [docs/dita_chunker.md](docs/dita_chunker.md).
+
 ---
 
 ## Troubleshooting

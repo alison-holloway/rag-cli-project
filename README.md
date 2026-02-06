@@ -906,9 +906,13 @@ rag-cli-project/
 │   └── vector_db/         # ChromaDB storage
 ├── logs/                   # Log files
 ├── tools/                  # Utility scripts
-│   └── html_scraper.py    # Download HTML documentation
+│   ├── html_scraper.py    # Download HTML documentation
+│   └── ingest_dita_docs.py # DITA semantic chunker
 ├── config/                 # Configuration files
-│   └── html_scraper.yaml  # HTML scraper config
+│   ├── html_scraper.yaml  # HTML scraper config
+│   └── dita_chunker.yaml  # DITA chunker config
+├── docs/                   # Additional documentation
+│   └── dita_chunker.md    # DITA chunker usage guide
 ├── requirements.txt        # Core dependencies
 ├── requirements-web.txt    # Web API dependencies
 ├── start-web.sh           # Start web application
@@ -959,6 +963,45 @@ After downloading, index the HTML files:
 ```bash
 rag-cli add data/documents/html/ -r
 ```
+
+### DITA Documentation Chunker
+
+For DITA-generated HTML documentation, use the semantic chunker for better RAG retrieval. Unlike naive character-based chunking, this tool respects DITA document structure (tasks, concepts, references).
+
+```bash
+# Ingest DITA HTML files with semantic chunking
+python tools/ingest_dita_docs.py
+
+# Preview without storing (dry run)
+python tools/ingest_dita_docs.py --dry-run
+
+# Clear existing documents and re-ingest
+python tools/ingest_dita_docs.py --clear-first
+
+# Verbose output
+python tools/ingest_dita_docs.py --verbose
+```
+
+**Configuration (`config/dita_chunker.yaml`):**
+
+```yaml
+input_dir: data/documents/html/
+collection_name: rag_documents
+min_chunk_size: 200
+max_chunk_size: 4000
+target_chunk_size: 1500
+```
+
+**Chunking strategies by document type:**
+
+| Type | Strategy |
+|------|----------|
+| task | Keeps entire procedure together (all steps + examples) |
+| concept | Preserves complete document as single chunk |
+| reference | Splits at logical boundaries (syntax/params vs examples) |
+| topic | Section-based chunking |
+
+This produces ~70% fewer chunks than naive chunking while maintaining complete, coherent retrieval units. See [docs/dita_chunker.md](docs/dita_chunker.md) for details.
 
 ## Troubleshooting
 
