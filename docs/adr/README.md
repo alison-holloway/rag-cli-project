@@ -9,6 +9,7 @@ ADRs document significant architectural decisions made during development, inclu
 | ADR | Title | Status | Date |
 |-----|-------|--------|------|
 | [0001](0001-python-version-compatibility.md) | Python Version Compatibility | Accepted | 2026-02-04 |
+| [0002](0002-embedding-model-upgrade.md) | Embedding Model Upgrade | Accepted | 2026-02-06 |
 
 ## ADR Format
 

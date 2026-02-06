@@ -92,7 +92,7 @@ class EmbeddingSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="", extra="ignore")
 
     embedding_model: str = Field(
-        default="all-MiniLM-L6-v2",
+        default="BAAI/bge-small-en-v1.5",
         description="Sentence transformer model for embeddings",
     )
 

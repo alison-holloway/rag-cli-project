@@ -21,7 +21,7 @@ def test_default_llm_provider_is_ollama() -> None:
 def test_default_embedding_model() -> None:
     """Test the default embedding model."""
     settings = get_settings()
-    assert settings.embedding.embedding_model == "all-MiniLM-L6-v2"
+    assert settings.embedding.embedding_model == "BAAI/bge-small-en-v1.5"
 
 
 def test_default_chunk_settings() -> None:

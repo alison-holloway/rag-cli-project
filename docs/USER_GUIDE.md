@@ -12,6 +12,7 @@ Welcome to RAG CLI! This guide will help you get started with using the applicat
 - [Downloading Documentation](#downloading-documentation)
   - [HTML Scraper Tool](#html-scraper-tool)
   - [DITA Documentation Chunker](#dita-documentation-chunker)
+  - [Embedding Model Migration](#embedding-model-migration)
 - [Troubleshooting](#troubleshooting)
 - [Quick Reference Card](#quick-reference-card)
 
@@ -161,7 +162,7 @@ rag-cli config get llm.ollama_model
 | `llm.ollama_model` | Which Ollama model to use | `llama3.1:8b` |
 | `llm.temperature` | Creativity level (0.0-2.0) | `0.3` |
 | `llm.max_tokens` | Maximum response length | `2000` |
-| `embedding.model` | Model for document search | `all-MiniLM-L6-v2` |
+| `embedding.model` | Model for document search | `BAAI/bge-small-en-v1.5` |
 | `chunking.chunk_size` | Document chunk size | `1200` |
 | `chunking.chunk_overlap` | Overlap between chunks | `200` |
 | `retrieval.top_k` | Number of chunks to retrieve | `5` |
@@ -565,6 +566,41 @@ The DITA chunker typically produces ~70% fewer chunks than standard chunking whi
 - Less noise in search results
 
 For technical details, see [docs/dita_chunker.md](docs/dita_chunker.md).
+
+### Embedding Model Migration
+
+If you need to change the embedding model (for example, to improve search quality), you must re-index all documents because different models produce different vector dimensions.
+
+**Available Models:**
+
+| Model | Dimensions | Quality | Speed |
+|-------|------------|---------|-------|
+| BAAI/bge-small-en-v1.5 | 384 | Best | Fast |
+| all-MiniLM-L6-v2 | 384 | Good | Fast |
+| all-mpnet-base-v2 | 768 | Better | Slow |
+| BAAI/bge-base-en-v1.5 | 768 | Better | Medium |
+
+**Benchmark Your Options:**
+
+```bash
+# Compare models on your documents
+python tools/benchmark_embeddings.py --output results.md
+```
+
+**Migrate to a New Model:**
+
+```bash
+# 1. Create a backup first (recommended)
+python tools/reingest_with_new_embeddings.py --backup --dry-run
+
+# 2. Re-index with new model
+python tools/reingest_with_new_embeddings.py --model BAAI/bge-small-en-v1.5 --backup
+
+# 3. Verify the migration
+python tools/compare_embeddings.py --old all-MiniLM-L6-v2 --new BAAI/bge-small-en-v1.5
+```
+
+For the technical rationale behind the default model choice, see [docs/adr/0002-embedding-model-upgrade.md](adr/0002-embedding-model-upgrade.md).
 
 ---
 

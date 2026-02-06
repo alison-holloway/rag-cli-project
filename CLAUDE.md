@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 RAG CLI is a Retrieval-Augmented Generation system for document question-answering. It provides multiple interfaces: CLI, REST API (FastAPI), Web UI (React/Vite), and native macOS desktop app (Tauri).
 
-**Key technologies:** Python 3.12+, ChromaDB, sentence-transformers (all-MiniLM-L6-v2), Ollama, FastAPI, React, Tauri
+**Key technologies:** Python 3.12+, ChromaDB, sentence-transformers (BAAI/bge-small-en-v1.5), Ollama, FastAPI, React, Tauri
 
 ## Common Commands
 
@@ -91,6 +91,15 @@ python tools/ingest_dita_docs.py --dry-run    # Preview without storing
 python tools/ingest_dita_docs.py --clear-first # Clear and re-ingest
 ```
 
+**Embedding Model Tools:**
+```bash
+python tools/benchmark_embeddings.py              # Benchmark 4 embedding models
+python tools/benchmark_embeddings.py --output results.md  # Save results
+python tools/reingest_with_new_embeddings.py --backup     # Re-ingest with new model
+python tools/reingest_with_new_embeddings.py --dry-run    # Preview migration
+python tools/compare_embeddings.py --old MODEL1 --new MODEL2  # Compare models
+```
+
 ## Architecture
 
 ### Core RAG Pipeline (`src/`)
@@ -159,6 +168,7 @@ Settings are loaded from environment variables. Copy `.env.example` to `.env`:
 - [README.md](README.md) - Main project documentation, CLI reference, installation
 - [docs/USER_GUIDE.md](docs/USER_GUIDE.md) - End-user guide
 - [docs/dita_chunker.md](docs/dita_chunker.md) - DITA semantic chunker guide
+- [docs/adr/](docs/adr/) - Architecture Decision Records
 - [desktop/README.md](desktop/README.md) - macOS desktop app user guide
 - [desktop/BUILDING.md](desktop/BUILDING.md) - Desktop app build instructions
 - [frontend/README.md](frontend/README.md) - Frontend development docs

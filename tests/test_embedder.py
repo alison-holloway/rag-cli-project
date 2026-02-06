@@ -19,7 +19,7 @@ class TestEmbedder:
         """Test embedder initializes with default model."""
         embedder = Embedder()
         # Model name should be from config
-        assert embedder.model_name == "all-MiniLM-L6-v2"
+        assert embedder.model_name == "BAAI/bge-small-en-v1.5"
 
     def test_init_custom_model(self) -> None:
         """Test embedder with custom model name."""
@@ -116,7 +116,8 @@ class TestEmbedder:
         emb2 = embedder.embed_text(text)
 
         similarity = embedder.similarity(emb1, emb2)
-        assert 0.99 <= similarity <= 1.0
+        # Allow small floating-point precision error above 1.0
+        assert 0.99 <= similarity <= 1.001
 
     def test_similarity_different_texts(self, embedder: Embedder) -> None:
         """Test similarity of different texts."""

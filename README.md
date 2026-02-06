@@ -24,7 +24,7 @@ A Retrieval-Augmented Generation (RAG) system for querying your documents using 
 
 - **Document Processing**: Load PDF, Markdown, and HTML files
 - **Smart Chunking**: Split documents into overlapping chunks for better retrieval
-- **Local Embeddings**: Generate embeddings using sentence-transformers (all-MiniLM-L6-v2)
+- **Local Embeddings**: Generate embeddings using sentence-transformers (BAAI/bge-small-en-v1.5)
 - **Vector Storage**: Persistent storage with ChromaDB
 - **LLM Integration**: Works with Ollama (free, local) or Claude API
 - **Multiple Interfaces**:
@@ -324,7 +324,7 @@ Documents indexed    2
 Total chunks         23
 Collection           rag_documents
 
-Embedding model      all-MiniLM-L6-v2
+Embedding model      BAAI/bge-small-en-v1.5
 Chunk size           1200
 Chunk overlap        200
 LLM provider         ollama
@@ -384,7 +384,7 @@ LLM_TEMPERATURE=0.3
 MAX_TOKENS=2000
 
 # Embedding Settings
-EMBEDDING_MODEL=all-MiniLM-L6-v2
+EMBEDDING_MODEL=BAAI/bge-small-en-v1.5
 
 # Chunking Settings
 CHUNK_SIZE=1200
@@ -554,7 +554,7 @@ Response:
   "temperature": 0.3,
   "chunk_size": 1200,
   "chunk_overlap": 200,
-  "embedding_model": "all-MiniLM-L6-v2"
+  "embedding_model": "BAAI/bge-small-en-v1.5"
 }
 ```
 
@@ -908,7 +908,10 @@ rag-cli-project/
 ├── logs/                   # Log files
 ├── tools/                  # Utility scripts
 │   ├── html_scraper.py    # Download HTML documentation
-│   └── ingest_dita_docs.py # DITA semantic chunker
+│   ├── ingest_dita_docs.py # DITA semantic chunker
+│   ├── benchmark_embeddings.py    # Embedding model benchmark
+│   ├── reingest_with_new_embeddings.py # Model migration tool
+│   └── compare_embeddings.py      # Model comparison tool
 ├── config/                 # Configuration files
 │   ├── html_scraper.yaml  # HTML scraper config
 │   └── dita_chunker.yaml  # DITA chunker config
@@ -1003,6 +1006,54 @@ target_chunk_size: 1500
 | topic | Section-based chunking |
 
 This produces ~70% fewer chunks than naive chunking while maintaining complete, coherent retrieval units. See [docs/dita_chunker.md](docs/dita_chunker.md) for details.
+
+### Embedding Model Tools
+
+Tools for benchmarking, migrating, and comparing embedding models.
+
+#### Benchmark Embedding Models
+
+Compare similarity scores across different embedding models to find the best one for your documents:
+
+```bash
+# Run full benchmark on 4 models
+python tools/benchmark_embeddings.py
+
+# Save results to file
+python tools/benchmark_embeddings.py --output results.md
+
+# Test only first 2 models (faster)
+python tools/benchmark_embeddings.py --models 2 --verbose
+```
+
+#### Re-ingest with New Embedding Model
+
+When changing embedding models, you must re-index all documents. This tool handles the migration:
+
+```bash
+# Re-ingest with backup (recommended)
+python tools/reingest_with_new_embeddings.py --backup
+
+# Preview without changes
+python tools/reingest_with_new_embeddings.py --dry-run
+
+# Use specific model
+python tools/reingest_with_new_embeddings.py --model BAAI/bge-small-en-v1.5
+```
+
+#### Compare Embedding Models
+
+Compare retrieval results between two models side-by-side:
+
+```bash
+# Compare old vs new model
+python tools/compare_embeddings.py --old all-MiniLM-L6-v2 --new BAAI/bge-small-en-v1.5
+
+# Save comparison report
+python tools/compare_embeddings.py --output comparison.md --verbose
+```
+
+See [docs/adr/0002-embedding-model-upgrade.md](docs/adr/0002-embedding-model-upgrade.md) for the rationale behind the default embedding model choice.
 
 ## Troubleshooting
 
