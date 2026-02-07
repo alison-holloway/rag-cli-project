@@ -1,5 +1,7 @@
 """API routes for the RAG backend."""
 
+import re
+
 from fastapi import APIRouter, File, HTTPException, Query, UploadFile
 
 from backend.api.models import (
@@ -15,6 +17,19 @@ from backend.api.models import (
 from backend.services.rag_service import get_rag_service
 
 router = APIRouter(prefix="/api", tags=["RAG API"])
+
+
+def sanitize_error(error: Exception) -> str:
+    """Remove sensitive information from error messages.
+
+    Removes absolute file paths from error messages to prevent
+    exposing filesystem structure to API clients.
+    """
+    msg = str(error)
+    # Remove absolute paths, keep only filename
+    # Matches /path/to/file.ext and replaces with just file.ext
+    msg = re.sub(r"/[^\s:]+/([^/\s:]+)", r"\1", msg)
+    return msg
 
 
 @router.get("/health", response_model=HealthResponse)
@@ -81,11 +96,11 @@ async def query_knowledge_base(request: QueryRequest):
         )
 
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=sanitize_error(e))
     except RuntimeError as e:
-        raise HTTPException(status_code=503, detail=str(e))
+        raise HTTPException(status_code=503, detail=sanitize_error(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Query failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Query failed: {sanitize_error(e)}")
 
 
 @router.post(
@@ -131,9 +146,9 @@ async def upload_document(
         return UploadResponse(**result)
 
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=sanitize_error(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Upload failed: {sanitize_error(e)}")
 
 
 @router.get(
@@ -184,6 +199,6 @@ async def delete_document(document_id: str):
         return DeleteResponse(**result)
 
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=sanitize_error(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Delete failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Delete failed: {sanitize_error(e)}")

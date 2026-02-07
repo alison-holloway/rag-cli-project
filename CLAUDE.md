@@ -167,6 +167,7 @@ Settings are loaded from environment variables. Copy `.env.example` to `.env`:
 
 - [README.md](README.md) - Main project documentation, CLI reference, installation
 - [docs/USER_GUIDE.md](docs/USER_GUIDE.md) - End-user guide
+- [docs/SECURITY.md](docs/SECURITY.md) - Security audit, API key handling, pre-commit checklist
 - [docs/dita_chunker.md](docs/dita_chunker.md) - DITA semantic chunker guide
 - [docs/adr/](docs/adr/) - Architecture Decision Records
 - [desktop/README.md](desktop/README.md) - macOS desktop app user guide
