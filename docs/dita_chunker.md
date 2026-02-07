@@ -60,14 +60,14 @@ Task documents contain step-by-step procedures. The chunker keeps all steps toge
 ```
 # Installing the CLI
 
-Install the Oracle Cloud Native Environment Command Line Interface...
+Install the Cloud Native Environment Command Line Interface...
 
 ## Steps
 
-1. Set up the Oracle Linux Yum Server Repository.
-   If the system uses the Oracle Linux Yum Server...
+1. Set up the Linux Yum Server Repository.
+   If the system uses the Linux Yum Server...
    ```
-   sudo dnf install -y oracle-ocne-release-el9
+   sudo dnf install -y ocne-release-el9
    ```
 
 2. Set up ULN.

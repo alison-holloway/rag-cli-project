@@ -12,7 +12,7 @@ The RAG CLI system uses embedding models to convert text into vectors for semant
 
 1. **Low similarity scores** - Average cosine similarity of ~0.37 for relevant queries with the original model
 2. **User expectation** - Target similarity scores of 0.6+ for confident retrieval
-3. **Domain specificity** - Technical documentation (Oracle OLCNE) may benefit from specialized models
+3. **Domain specificity** - Technical documentation (Kubernetes/cloud-native) may benefit from specialized models
 
 ### Benchmark Results
 

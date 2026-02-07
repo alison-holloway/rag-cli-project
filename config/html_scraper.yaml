@@ -10,9 +10,12 @@ delay_seconds: 1.0
 # TOC URLs to process - add one URL per line
 # The scraper will extract all .html links from each TOC page
 sources:
-  - https://docs.example.com/guide/toc.htm
-  - https://docs.example.com/reference/toc.htm
-  # Add more TOC URLs as needed
+ # Add TOC URLs for documentation sites you want to scrape
+ # Example: - https://docs.example.com/product/v2/quickstart/toc.htm
+ - https://example.com/docs/quickstart/toc.htm
+ - https://example.com/docs/clusters/toc.htm
+ - https://example.com/docs/concepts/toc.htm
+ #  Add more TOC URLs as needed
 
 # URL patterns to skip when extracting links from TOC pages
 skip_patterns:

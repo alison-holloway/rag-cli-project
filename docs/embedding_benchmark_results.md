@@ -64,7 +64,7 @@
 | Rank | Similarity | Document |
 |------|------------|----------|
 | 1 | 0.216 | Kubernetes Components |
-| 2 | 0.163 | Oracle Linux Virtualization Manager Provider |
+| 2 | 0.163 | Linux Virtualization Manager Provider |
 | 3 | 0.139 | Creating an Access Token |
 | 4 | 0.131 | Creating a Bring Your Own Cluster |
 | 5 | 0.131 | Release 2.0.4 |
@@ -84,7 +84,7 @@
 | Rank | Similarity | Document |
 |------|------------|----------|
 | 1 | 0.548 | Release 2.0.4 |
-| 2 | 0.548 | Oracle Linux Virtualization Manager Provider |
+| 2 | 0.548 | Linux Virtualization Manager Provider |
 | 3 | 0.525 | Adding the UI and Application Catalogs into a Clus... |
 | 4 | 0.521 | Setting a Proxy Server for the UI |
 | 5 | 0.518 | Creating a Bring Your Own Cluster |
@@ -95,7 +95,7 @@
 |------|------------|----------|
 | 1 | 0.518 | Kubernetes Components |
 | 2 | 0.517 | Release 2.0.4 |
-| 3 | 0.513 | Oracle Linux Virtualization Manager Provider |
+| 3 | 0.513 | Linux Virtualization Manager Provider |
 | 4 | 0.497 | Getting a Catalog |
 | 5 | 0.495 | Setting a Proxy Server for the UI |
 
@@ -119,7 +119,7 @@
 | 2 | 0.751 | Connecting to a Cluster |
 | 3 | 0.730 | Creating a libvirt Cluster |
 | 4 | 0.702 | Preface |
-| 5 | 0.657 | Oracle Linux Virtualization Manager Provider |
+| 5 | 0.657 | Linux Virtualization Manager Provider |
 
 **BAAI/bge-small-en-v1.5** (query time: 8.1ms)
 

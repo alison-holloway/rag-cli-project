@@ -42,7 +42,7 @@ Rules you MUST follow strictly:
 - Always include exact commands in inline code blocks using backticks \
 (e.g. `sudo dnf install ...`).
 - If the context contains relevant information from specific chunks, cite them \
-briefly at the start or end like: "From the Oracle Linux documentation:" or \
+briefly at the start or end like: "From the documentation:" or \
 list sources at the end.
 - If multiple chunks are relevant, synthesize them into one clear answer \
 without mentioning chunk numbers unless necessary.
