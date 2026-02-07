@@ -192,8 +192,8 @@ rag-cli query "Explain the installation process" --top-k 10
 # Use Claude instead of Ollama (requires API key)
 rag-cli query "Summarize the main points" --llm claude
 
-# Show which documents were used for the answer
-rag-cli query "How do I configure the settings?" --show-sources
+# Hide source documents (shown by default)
+rag-cli query "How do I configure the settings?" --no-sources
 
 # Adjust response creativity (0.0 = focused, 1.0 = creative)
 rag-cli query "What are the benefits?" --temperature 0.2
@@ -403,7 +403,7 @@ rag-cli query "How do I install the software?"
 # Output: Displays answer based on your documents
 
 # Step 5: Ask a follow-up with more context
-rag-cli query "What are the system requirements?" --top-k 10 --show-sources
+rag-cli query "What are the system requirements?" --top-k 10
 
 # Step 6: Start an interactive session for multiple questions
 rag-cli chat

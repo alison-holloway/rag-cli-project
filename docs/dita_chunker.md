@@ -141,7 +141,7 @@ The semantic approach produces **~70% fewer chunks** while maintaining complete,
 ## Example Query
 
 ```bash
-rag-cli query "How do I install the CLI?" --show-sources
+rag-cli query "How do I install the CLI?"
 ```
 
 Returns the complete installation procedure from the task document, not fragments spread across multiple chunks.
@@ -151,6 +151,6 @@ Returns the complete installation procedure from the task document, not fragment
 The tool integrates with the existing RAG CLI infrastructure:
 
 - Uses the same ChromaDB collection (`rag_documents`)
-- Same embedding model (`all-MiniLM-L6-v2`)
+- Same embedding model (`BAAI/bge-small-en-v1.5`)
 - Documents appear in `rag-cli list` and `rag-cli stats`
 - Query with `rag-cli query` or the Web UI

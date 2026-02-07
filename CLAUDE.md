@@ -43,8 +43,8 @@ cd frontend && npm run build              # Build (includes type checking)
 rag-cli init                    # Initialize (sets up Ollama)
 rag-cli add ./documents/        # Index documents
 rag-cli add ./docs/ -r          # Index recursively
-rag-cli query "question"        # Query knowledge base
-rag-cli query "q" --show-sources  # Query with source citations
+rag-cli query "question"        # Query knowledge base (shows sources by default)
+rag-cli query "q" --no-sources    # Query without source citations
 rag-cli chat                    # Interactive chat mode
 rag-cli chat --stream           # Chat with streaming responses
 rag-cli list                    # List indexed documents
@@ -172,3 +172,22 @@ Settings are loaded from environment variables. Copy `.env.example` to `.env`:
 - [desktop/README.md](desktop/README.md) - macOS desktop app user guide
 - [desktop/BUILDING.md](desktop/BUILDING.md) - Desktop app build instructions
 - [frontend/README.md](frontend/README.md) - Frontend development docs
+
+## Documentation Update Checklist
+
+When making changes, update documentation in these locations:
+
+| Change Type | Files to Update |
+|-------------|-----------------|
+| CLI commands/options | README.md (CLI Reference), docs/USER_GUIDE.md, CLAUDE.md (Common Commands) |
+| API endpoints | README.md (REST API), backend/README.md if exists |
+| Configuration options | README.md (Configuration), .env.example, docs/USER_GUIDE.md |
+| New tools | README.md (Tools section), CLAUDE.md (Common Commands) |
+| Architecture decisions | docs/adr/ (create new ADR), docs/adr/README.md (update index) |
+| Frontend changes | frontend/README.md |
+| Desktop app changes | desktop/README.md, desktop/BUILDING.md |
+
+**Quick grep to find docs needing updates:**
+```bash
+grep -r "keyword" README.md docs/ CLAUDE.md --include="*.md"
+```

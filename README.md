@@ -194,8 +194,8 @@ rag-cli query "What is REST?" --llm claude
 # Adjust response creativity
 rag-cli query "Summarize the document" --temperature 0.2
 
-# Show which source documents were used
-rag-cli query "What is Python?" --show-sources
+# Hide source documents (shown by default)
+rag-cli query "What is Python?" --no-sources
 
 # With verbose output (shows retrieval details)
 rag-cli -v query "What is Python?"
@@ -205,7 +205,7 @@ rag-cli -v query "What is Python?"
 - `-k, --top-k`: Number of chunks to retrieve (default: 5)
 - `-l, --llm`: LLM provider (`ollama` or `claude`, default: ollama)
 - `-t, --temperature`: Response creativity (0.0-1.0)
-- `-s, --show-sources`: Display source documents used for the answer
+- `-s, --show-sources / -S, --no-sources`: Show/hide source documents (default: show)
 
 **Example output (default):**
 ```
