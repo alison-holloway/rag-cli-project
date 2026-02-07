@@ -426,10 +426,10 @@ def add(ctx: click.Context, path: str, recursive: bool, force: bool) -> None:
     help="LLM temperature (0.0-1.0)",
 )
 @click.option(
-    "--show-sources",
-    "-s",
-    is_flag=True,
-    help="Show source documents used",
+    "--show-sources/--no-sources",
+    "-s/-S",
+    default=True,
+    help="Show/hide source documents used (default: show)",
 )
 @click.pass_context
 def query(
