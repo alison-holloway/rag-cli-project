@@ -141,11 +141,15 @@ function MarkdownContent({ content }) {
   return (
     <ReactMarkdown
       components={{
-        code({ node, inline, className, children, ...props }) {
-          if (inline) {
+        code({ node, className, children, ...props }) {
+          const isBlock = Boolean(className) || String(children).endsWith('\n');
+          if (!isBlock) {
             return <InlineCode {...props}>{children}</InlineCode>;
           }
           return <CodeBlock className={className}>{children}</CodeBlock>;
+        },
+        pre({ children }) {
+          return <>{children}</>;
         },
         // Style links
         a({ node, children, ...props }) {
