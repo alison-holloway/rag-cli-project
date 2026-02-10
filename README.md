@@ -68,6 +68,15 @@ brew install ollama
 curl -fsSL https://ollama.ai/install.sh | sh
 ```
 
+**Using Claude (optional):** To use the Claude API instead of Ollama, add your API key to `.env`:
+
+```bash
+cp .env.example .env
+# Edit .env and set ANTHROPIC_API_KEY=sk-ant-your-key-here
+```
+
+Then use `--llm claude` with CLI commands or select Claude in the Web UI settings.
+
 ### Basic Usage (CLI)
 
 ```bash
@@ -1120,6 +1129,27 @@ ollama pull llama3.1:8b
 ```
 
 Ensure you have sufficient disk space (~4.7GB for llama3.1:8b).
+
+### Claude API Not Available
+
+```
+Claude API is not available. Check your ANTHROPIC_API_KEY.
+```
+
+**Solution:** Ensure your API key is set in the `.env` file:
+
+```bash
+# In .env
+ANTHROPIC_API_KEY=sk-ant-your-key-here
+```
+
+Verify the key is loaded:
+```bash
+rag-cli config list | grep -i anthropic
+# Should show "anthropic_api_key: [SET]"
+```
+
+Get an API key from https://console.anthropic.com if you don't have one.
 
 ### No Documents Indexed
 

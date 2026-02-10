@@ -307,7 +307,7 @@ Click the **Settings** button in the header to adjust query parameters:
 
 **LLM Provider:**
 - **Ollama** (default) - Free, runs locally on your computer
-- **Claude** - Requires an Anthropic API key (set in `.env` file)
+- **Claude** - Requires an Anthropic API key (set `ANTHROPIC_API_KEY` in `.env` file; get a key from https://console.anthropic.com)
 
 **Context Chunks (top_k):**
 - Slider from 1 to 20
@@ -607,6 +607,23 @@ For the technical rationale behind the default model choice, see [docs/adr/0002-
 ## Troubleshooting
 
 ### Common Issues
+
+#### "Claude API is not available"
+
+**Problem:** You see an error about the Claude API when using `--llm claude` or selecting Claude in the Web UI.
+
+**Solution:**
+1. Ensure your API key is set in the `.env` file:
+   ```bash
+   # In .env
+   ANTHROPIC_API_KEY=sk-ant-your-key-here
+   ```
+2. Verify the key is loaded:
+   ```bash
+   rag-cli config list | grep -i anthropic
+   # Should show "anthropic_api_key: [SET]"
+   ```
+3. Get an API key from https://console.anthropic.com if you don't have one.
 
 #### "Ollama is not running"
 

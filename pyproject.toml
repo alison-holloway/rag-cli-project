@@ -35,6 +35,7 @@ dependencies = [
     "sentence-transformers>=2.2.0",
     "numpy>=1.24.0",
     "ollama>=0.1.0",
+    "anthropic>=0.18.0",
     "python-dotenv>=1.0.0",
     "pydantic>=2.0.0",
     "tqdm>=4.66.0",
@@ -47,9 +48,7 @@ dev = [
     "black>=23.0.0",
     "ruff>=0.1.0",
 ]
-claude = [
-    "anthropic>=0.18.0",
-]
+claude = []  # anthropic is now a core dependency; kept for backwards compatibility with pip install .[claude]
 
 [project.scripts]
 rag-cli = "src.cli:main"

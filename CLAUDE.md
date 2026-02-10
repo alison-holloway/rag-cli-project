@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 RAG CLI is a Retrieval-Augmented Generation system for document question-answering. It provides multiple interfaces: CLI, REST API (FastAPI), Web UI (React/Vite), and native macOS desktop app (Tauri).
 
-**Key technologies:** Python 3.12+, ChromaDB, sentence-transformers (BAAI/bge-small-en-v1.5), Ollama, FastAPI, React, Tauri
+**Key technologies:** Python 3.12+, ChromaDB, sentence-transformers (BAAI/bge-small-en-v1.5), Ollama, Anthropic (Claude), FastAPI, React, Tauri
 
 ## Common Commands
 
@@ -153,7 +153,7 @@ Settings are loaded from environment variables. Copy `.env.example` to `.env`:
 
 - `OLLAMA_MODEL` - Default: llama3.1:8b
 - `DEFAULT_LLM_PROVIDER` - "ollama" (free) or "claude"
-- `ANTHROPIC_API_KEY` - Required only for Claude
+- `ANTHROPIC_API_KEY` - Required for Claude (set in `.env`)
 - `CHUNK_SIZE` / `CHUNK_OVERLAP` - Text chunking (1200/200)
 - `TOP_K_RESULTS` - Chunks retrieved per query (5)
 

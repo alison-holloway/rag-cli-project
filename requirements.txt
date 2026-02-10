@@ -15,7 +15,7 @@ numpy>=1.24.0
 
 # LLM Integration
 ollama>=0.1.0  # FREE local LLM (default)
-# anthropic>=0.18.0  # Optional: uncomment if using --llm claude flag
+anthropic>=0.18.0
 
 # Utilities
 python-dotenv>=1.0.0
