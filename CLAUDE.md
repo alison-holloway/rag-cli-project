@@ -187,6 +187,7 @@ When making changes, update documentation in these locations:
 | Architecture decisions | docs/adr/ (create new ADR), docs/adr/README.md (update index) |
 | Frontend changes | frontend/README.md |
 | Desktop app changes | desktop/README.md, desktop/BUILDING.md |
+| New/removed files or directories | README.md (Project Structure section) |
 
 **Quick grep to find docs needing updates:**
 ```bash

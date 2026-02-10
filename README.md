@@ -892,14 +892,20 @@ rag-cli-project/
 │   ├── src/               # React source code
 │   │   ├── App.jsx        # Main React component
 │   │   ├── components/    # UI components
+│   │   │   ├── AboutDialog.jsx     # About dialog with version info
 │   │   │   ├── ChatInterface.jsx   # Main chat container
-│   │   │   ├── MessageList.jsx     # Message display with markdown/code
-│   │   │   ├── MessageInput.jsx    # Input field with send button
-│   │   │   ├── SettingsPanel.jsx   # LLM and query settings
-│   │   │   ├── Sidebar.jsx         # Document management sidebar
 │   │   │   ├── DocumentList.jsx    # Indexed document list
 │   │   │   ├── DocumentUpload.jsx  # Drag-and-drop upload
-│   │   │   └── Notification.jsx    # Toast notifications
+│   │   │   ├── ErrorBoundary.jsx   # React error boundary
+│   │   │   ├── MessageInput.jsx    # Input field with send button
+│   │   │   ├── MessageList.jsx     # Message display with markdown/code
+│   │   │   ├── Notification.jsx    # Toast notifications
+│   │   │   ├── SettingsPanel.jsx   # LLM and query settings
+│   │   │   ├── Sidebar.jsx         # Document management sidebar
+│   │   │   ├── ThemeToggle.jsx     # Light/dark theme switch
+│   │   │   └── WelcomeScreen.jsx   # Initial welcome/onboarding screen
+│   │   ├── context/
+│   │   │   └── ThemeContext.jsx # Theme state provider
 │   │   └── services/
 │   │       └── api.js     # Backend API client
 │   └── src-tauri/         # Tauri/Rust desktop app
@@ -925,7 +931,14 @@ rag-cli-project/
 │   ├── html_scraper.yaml  # HTML scraper config
 │   └── dita_chunker.yaml  # DITA chunker config
 ├── docs/                   # Additional documentation
-│   └── dita_chunker.md    # DITA chunker usage guide
+│   ├── SECURITY.md        # Security audit and API key handling
+│   ├── USER_GUIDE.md      # End-user guide
+│   ├── dita_chunker.md    # DITA chunker usage guide
+│   ├── embedding_benchmark_results.md # Embedding model comparison
+│   └── adr/               # Architecture Decision Records
+│       ├── README.md      # ADR index
+│       ├── 0001-python-version-compatibility.md
+│       └── 0002-embedding-model-upgrade.md
 ├── requirements.txt        # Core dependencies
 ├── requirements-web.txt    # Web API dependencies
 ├── start-web.sh           # Start web application
