@@ -113,20 +113,24 @@ class RAGService:
 
         processing_time = (time.time() - start_time) * 1000  # Convert to ms
 
-        # Format sources
+        # Format sources - deduplicate by filename (matching CLI behavior)
         sources = []
+        seen_files = set()
         if result.retrieval and result.retrieval.chunks:
             for chunk in result.retrieval.chunks:
-                sources.append(
-                    {
-                        "file": chunk.metadata.get("source_file", "unknown"),
-                        "chunk_id": chunk.chunk_id,
-                        "content": chunk.content[:200] + "..."
-                        if len(chunk.content) > 200
-                        else chunk.content,
-                        "similarity": chunk.similarity or 0.0,
-                    }
-                )
+                file_name = chunk.metadata.get("source_file", "unknown")
+                if file_name not in seen_files:
+                    seen_files.add(file_name)
+                    sources.append(
+                        {
+                            "file": file_name,
+                            "chunk_id": chunk.chunk_id,
+                            "content": chunk.content[:200] + "..."
+                            if len(chunk.content) > 200
+                            else chunk.content,
+                            "similarity": chunk.similarity or 0.0,
+                        }
+                    )
 
         return {
             "answer": result.answer,

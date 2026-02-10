@@ -585,13 +585,30 @@ def chat(ctx: click.Context, llm: str, stream: bool) -> None:
                 console.print("[bold green]Assistant:[/bold green] ", end="")
 
                 if stream:
+                    # Retrieve sources before streaming the answer
+                    retrieval = pipeline.retriever.retrieve(
+                        query=question, top_k=pipeline.top_k
+                    )
                     for chunk in pipeline.query_stream(question):
                         console.print(chunk, end="")
                     console.print()
+                    # Show sources
+                    source_files = sorted(
+                        {c.source_file for c in retrieval.chunks if c.source_file}
+                    )
+                    if source_files:
+                        console.print("\n[bold]Sources:[/bold]")
+                        for source in source_files:
+                            console.print(f"  • {source}")
                 else:
                     with spinner("Thinking..."):
                         result = pipeline.query(question)
                     console.print(result.answer)
+                    # Show sources
+                    if result.sources:
+                        console.print("\n[bold]Sources:[/bold]")
+                        for source in result.sources:
+                            console.print(f"  • {source}")
 
             except KeyboardInterrupt:
                 console.print("\n[dim]Goodbye![/dim]")
