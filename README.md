@@ -647,7 +647,7 @@ tail -f logs/frontend.log
 
 **Chat Interface:**
 - Ask questions in a familiar chat-style layout
-- Full chat history persisted during your session
+- Chat history persists across page refreshes and app restarts
 - Real-time loading indicators with animated "Thinking..." state
 - Expandable sources section shows which documents were used
 - View model used and processing time for each response
@@ -671,7 +671,7 @@ tail -f logs/frontend.log
 - Toggle between **Ollama** (free, local) and **Claude** (API) providers
 - Adjust **top_k** parameter (1-20 context chunks)
 - Adjust **temperature** (0-1 for response creativity)
-- Settings persist during your session
+- Settings persist across page refreshes and app restarts
 - Visual badges show current configuration
 
 **Document Upload:**
@@ -738,7 +738,7 @@ Click the **Settings** button in the header to configure query parameters:
 - Lower = more focused and deterministic
 - Higher = more creative and varied
 
-Settings are displayed as badges in the panel footer and persist during your session.
+Settings are displayed as badges in the panel footer and persist across page refreshes.
 
 ### Keyboard Shortcuts
 

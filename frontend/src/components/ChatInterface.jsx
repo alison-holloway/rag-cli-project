@@ -6,6 +6,11 @@ import ThemeToggle from './ThemeToggle';
 import { queryKnowledgeBase, getConfig } from '../services/api';
 import './ChatInterface.css';
 
+const STORAGE_KEY_MESSAGES = 'rag-cli-messages';
+const STORAGE_KEY_SETTINGS = 'rag-cli-settings';
+const MAX_PERSISTED_MESSAGES = 100;
+const SETTINGS_DEFAULTS = { llmProvider: 'ollama', topK: 5, temperature: 0.7 };
+
 /**
  * Format date for export
  */
@@ -84,18 +89,57 @@ function exportAsText(messages) {
  * Main chat interface component
  */
 const ChatInterface = forwardRef(function ChatInterface(props, ref) {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY_MESSAGES);
+      if (!stored) return [];
+      const parsed = JSON.parse(stored);
+      if (!Array.isArray(parsed)) return [];
+      return parsed
+        .filter((msg) => !msg.isLoading)
+        .map((msg) => ({
+          ...msg,
+          timestamp: msg.timestamp ? new Date(msg.timestamp) : undefined,
+        }));
+    } catch {
+      return [];
+    }
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showExportMenu, setShowExportMenu] = useState(false);
-  const [settings, setSettings] = useState({
-    llmProvider: 'ollama',
-    topK: 5,
-    temperature: 0.7,
+  const [settings, setSettings] = useState(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY_SETTINGS);
+      if (stored) return { ...SETTINGS_DEFAULTS, ...JSON.parse(stored) };
+    } catch { /* ignore */ }
+    return SETTINGS_DEFAULTS;
   });
+  const [settingsUserModified, setSettingsUserModified] = useState(
+    () => localStorage.getItem(STORAGE_KEY_SETTINGS) !== null
+  );
+
+  // Persist settings to localStorage
+  useEffect(() => {
+    if (settingsUserModified) {
+      try {
+        localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
+      } catch { /* ignore */ }
+    }
+  }, [settings, settingsUserModified]);
 
   const inputRef = useRef(null);
+
+  // Persist messages to localStorage
+  useEffect(() => {
+    try {
+      const toPersist = messages
+        .filter((msg) => !msg.isLoading)
+        .slice(-MAX_PERSISTED_MESSAGES);
+      localStorage.setItem(STORAGE_KEY_MESSAGES, JSON.stringify(toPersist));
+    } catch { /* ignore write failures */ }
+  }, [messages]);
 
   // Generate unique message ID
   const generateId = () => `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -146,16 +190,19 @@ const ChatInterface = forwardRef(function ChatInterface(props, ref) {
     };
   }, [messages.length]);
 
-  // Fetch configuration from backend on mount
+  // Fetch configuration from backend on mount (only if user hasn't customized)
+  const hasUserSettings = useRef(settingsUserModified);
   useEffect(() => {
     const fetchConfig = async () => {
       try {
         const config = await getConfig();
-        setSettings({
-          llmProvider: config.llm_provider || 'ollama',
-          topK: config.top_k || 5,
-          temperature: config.temperature || 0.3,
-        });
+        if (!hasUserSettings.current) {
+          setSettings({
+            llmProvider: config.llm_provider || 'ollama',
+            topK: config.top_k || 5,
+            temperature: config.temperature || 0.3,
+          });
+        }
       } catch (err) {
         console.warn('Failed to fetch config, using defaults:', err);
       }
@@ -229,6 +276,7 @@ const ChatInterface = forwardRef(function ChatInterface(props, ref) {
 
   const handleSettingsChange = (newSettings) => {
     setSettings((prev) => ({ ...prev, ...newSettings }));
+    setSettingsUserModified(true);
   };
 
   const handleExport = (format) => {

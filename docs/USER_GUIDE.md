@@ -320,7 +320,7 @@ Click the **Settings** button in the header to adjust query parameters:
 - Higher = more creative, varied answers
 - Default: 0.7
 
-Settings are saved during your session and shown as badges below the sliders.
+Settings persist across page refreshes and app restarts, and are shown as badges below the sliders.
 
 ### Asking Questions
 
